@@ -4,6 +4,7 @@ import { Form, useNavigate } from "react-router-dom";
 import ComeAwayApi from "../api/api";
 import UserContext from "../Auth/UserContext";
 import jwt from "jsonwebtoken";
+import Alert from "../Common/Alert";
 
 export const TOKEN_STORAGE_ID = "comeaway-token";
 
@@ -16,11 +17,12 @@ const CalendarForm = () => {
   const [calAvailBegin, setCalAvailBegin] = useState([]);
   const [calAvailEnd, setCalAvailEnd] = useState([]);
   const [formData, setFormData] = useState({
-    calViewsId: 0,
-    businessBeginsHourId: 0,
-    businessEndsHourId: 0,
+    viewType: 0,
+    businessBeginsHour: 0,
+    businessEndsHour: 0,
   });
   const [calendar, setCalendar] = useState();
+  const [formError, setFormError] = useState([]);
 
   useEffect(
     function loadUserInfo() {
@@ -31,7 +33,8 @@ const CalendarForm = () => {
             ComeAwayApi.token = token;
             let currentUser = await ComeAwayApi.getCurrentUser(username);
             setCurrentUser(currentUser);
-          } catch (e) {
+          } catch (errors) {
+            setFormError(errors);
             setCurrentUser(null);
           }
         }
@@ -67,17 +70,16 @@ const CalendarForm = () => {
   async function handleSubmit(evt) {
     evt.preventDefault();
     let calendarData = {
-      calViewsId: formData.calViewsId,
-      businessBeginsHourId: formData.businessBeginsHourId,
-      businessEndsHourId: formData.businessEndsHourId,
+      viewType: formData.viewType,
+      businessBeginsHour: formData.businessBeginsHour,
+      businessEndsHour: formData.businessEndsHour,
     };
-
-    console.log(calendarData);
 
     let createdCal;
 
     try {
       createdCal = await ComeAwayApi.createCal(calendarData);
+      console.log(createdCal);
       if (createdCal.success) {
         navigate("/calendar");
       }
@@ -85,6 +87,7 @@ const CalendarForm = () => {
       return;
     }
     setFormData((f) => ({ ...f }));
+    setFormError([]);
     setCalendar(createdCal);
   }
 
@@ -94,7 +97,7 @@ const CalendarForm = () => {
       ...f,
       [name]: parseInt(value),
     }));
-    // setFormError([]);
+    setFormError([]);
   }
 
   if (!infoLoaded) return;
@@ -109,9 +112,9 @@ const CalendarForm = () => {
               <Form method="post" onSubmit={handleSubmit}>
                 <div className="d-grid gap-3">
                   <div className="form-group">
-                    <label htmlFor="calViewsId">Select Calendar View:</label>
+                    <label htmlFor="viewType">Select Calendar View:</label>
                     <select
-                      name="calViewsId"
+                      name="viewType"
                       className="form-control"
                       onChange={handleChange}
                     >
@@ -125,11 +128,11 @@ const CalendarForm = () => {
                     </select>
                   </div>
                   <div className="form-group">
-                    <label htmlFor="businessBeginsHourId">
+                    <label htmlFor="businessBeginsHour">
                       Select Start Time:
                     </label>
                     <select
-                      name="businessBeginsHourId"
+                      name="businessBeginsHour"
                       className="form-control"
                       onChange={handleChange}
                     >
@@ -137,15 +140,15 @@ const CalendarForm = () => {
                       {calAvailBegin &&
                         calAvailBegin.map((s, id) => (
                           <option value={s.id} key={id}>
-                            {s.businessBeginsHour}
+                            {s.hourTitle}
                           </option>
                         ))}
                     </select>
                   </div>
                   <div className="form-group">
-                    <label htmlFor="businessEndsHourId">Select End Time:</label>
+                    <label htmlFor="businessEndsHour">Select End Time:</label>
                     <select
-                      name="businessEndsHourId"
+                      name="businessEndsHour"
                       className="form-control"
                       onChange={handleChange}
                     >
@@ -153,13 +156,17 @@ const CalendarForm = () => {
                       {calAvailEnd &&
                         calAvailEnd.map((e, id) => (
                           <option value={e.id} key={id}>
-                            {e.businessEndsHour}
+                            {e.hourTitle}
                           </option>
                         ))}
                     </select>
                   </div>
-                  <div>Hours are set within a 24 hour period</div>
                 </div>
+
+                {formError.length ? (
+                  <Alert type="danger" messages={formError} />
+                ) : null}
+
                 <button className="btn btn-sm btn-primary mt-3">
                   Create Calendar
                 </button>

@@ -62,10 +62,14 @@ class ComeAwayApi {
     return res.user;
   }
 
-  static async getCalData(calViewId, businessBeginsHourId, businessEndsHourId) {
+  static async getCalData(
+    viewTypeId,
+    businessBeginsHourId,
+    businessEndsHourId
+  ) {
     let res = await this.request(
       `calendar`,
-      calViewId,
+      viewTypeId,
       businessBeginsHourId,
       businessEndsHourId
     );
@@ -82,17 +86,23 @@ class ComeAwayApi {
     return res;
   }
 
-  static async getBeginHours(id, businessBeginsHour) {
+  static async getBeginHours(id, businessBeginsHour, hourTitle) {
     let res = await this.request(
       `calendar/begin-hours`,
       id,
-      businessBeginsHour
+      businessBeginsHour,
+      hourTitle
     );
     return res;
   }
 
-  static async getEndtHours(id, businessEndsHour) {
-    let res = await this.request(`calendar/end-hours`, id, businessEndsHour);
+  static async getEndtHours(id, businessEndsHour, hourTitle) {
+    let res = await this.request(
+      `calendar/end-hours`,
+      id,
+      businessEndsHour,
+      hourTitle
+    );
     return res;
   }
 }
