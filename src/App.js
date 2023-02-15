@@ -1,7 +1,9 @@
-import React from "react";
+import Paths from "./Paths/Paths";
 
-function App() {
-  return <div>App</div>;
-}
+import "./App.css";
+
+const App = () => {
+  return <Paths />;
+};
 
 export default App;
