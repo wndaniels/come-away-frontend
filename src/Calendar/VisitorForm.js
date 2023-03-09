@@ -8,7 +8,7 @@ import Alert from "../Common/Alert";
 
 export const TOKEN_STORAGE_ID = "comeaway-token";
 
-const CalendarForm = () => {
+const VisitorForm = () => {
   const navigate = useNavigate();
   const { currentUser, setCurrentUser } = useContext(UserContext);
   const [infoLoaded, setInfoLoaded] = useState(false);
@@ -16,12 +16,13 @@ const CalendarForm = () => {
   const [calViews, setCalViews] = useState([]);
   const [calAvailBegin, setCalAvailBegin] = useState([]);
   const [calAvailEnd, setCalAvailEnd] = useState([]);
+  const [calByUser, setCalByUser] = useState([]);
   const [formData, setFormData] = useState({
-    viewType: "",
-    businessBeginsHour: 0,
-    businessEndsHour: 0,
-    userId: currentUser.id,
+    viewType: calByUser.viewType,
+    businessBeginsHour: calByUser.businessBeginsHour,
+    businessEndsHour: calByUser.businessEndsHour,
   });
+
   const [calendar, setCalendar] = useState();
   const [formError, setFormError] = useState([]);
 
@@ -46,6 +47,21 @@ const CalendarForm = () => {
     },
     [token]
   );
+
+  useEffect(() => {
+    async function getCalDataByUser() {
+      const userCalData = await ComeAwayApi.getCalData();
+      try {
+        if (currentUser)
+          userCalData.map((d) => {
+            if (currentUser.id === d.userId) setCalByUser(d);
+          });
+      } catch (errors) {
+        return;
+      }
+    }
+    getCalDataByUser();
+  }, []);
 
   useEffect(function getCalData() {
     async function getViewData() {
@@ -78,12 +94,12 @@ const CalendarForm = () => {
       userId: currentUser.id,
     };
 
-    let username = currentUser.username;
+    console.log(calendarData);
 
     let createdCal;
 
     try {
-      createdCal = await ComeAwayApi.createCal(username, calendarData);
+      createdCal = await ComeAwayApi.updateCal(calendarData);
       console.log(createdCal);
     } catch (errors) {
       setFormError([errors]);
@@ -122,10 +138,10 @@ const CalendarForm = () => {
   return (
     <div className="CalendarForm">
       <div className="container col-md-6 offset-md-3 col-lg-4 offset-lg-4">
-        <h1 className="mb-3">Create Calendar</h1>
+        <h1 className="mb-3">Edit Calendar</h1>
         <div className="card">
           <div className="card-body">
-            <Form method="post" onSubmit={handleSubmit}>
+            <Form method="patch" onSubmit={handleSubmit}>
               <div className="d-grid gap-3">
                 <div className="form-group">
                   {formError.length ? (
@@ -139,8 +155,8 @@ const CalendarForm = () => {
                     name="viewType"
                     className="form-control"
                     onChange={handleViewChange}
+                    defaultValue={calByUser.viewType}
                   >
-                    <option hidden>-</option>
                     {calViews &&
                       calViews.map((v, id) => (
                         <option value={v.viewType} key={id}>
@@ -157,9 +173,9 @@ const CalendarForm = () => {
                   <select
                     name="businessBeginsHour"
                     className="form-control"
+                    defaultValue={calByUser.businessBeginsHour}
                     onChange={handleHourChange}
                   >
-                    <option hidden>-</option>
                     {calAvailBegin &&
                       calAvailBegin.map((s, id) => (
                         <option value={s.businessBeginsHour} key={id}>
@@ -174,9 +190,9 @@ const CalendarForm = () => {
                   <select
                     name="businessEndsHour"
                     className="form-control mb-3"
+                    defaultValue={calByUser.businessEndsHour}
                     onChange={handleHourChange}
                   >
-                    <option hidden>-</option>
                     {calAvailEnd &&
                       calAvailEnd.map((e, id) => (
                         <option value={e.businessEndsHour} key={id}>
@@ -188,7 +204,7 @@ const CalendarForm = () => {
               </div>
 
               <button className="btn btn-sm btn-primary">
-                Create Calendar
+                Update Calendar
               </button>
             </Form>
           </div>
@@ -198,4 +214,4 @@ const CalendarForm = () => {
   );
 };
 
-export default CalendarForm;
+export default VisitorForm;

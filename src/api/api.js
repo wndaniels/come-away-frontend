@@ -63,45 +63,61 @@ class ComeAwayApi {
   }
 
   static async getCalData(
-    viewTypeId,
-    businessBeginsHourId,
-    businessEndsHourId
+    id,
+    viewType,
+    businessBeginsHour,
+    businessEndsHour,
+    userId
   ) {
     let res = await this.request(
       `calendar`,
-      viewTypeId,
-      businessBeginsHourId,
-      businessEndsHourId
+      id,
+      viewType,
+      businessBeginsHour,
+      businessEndsHour,
+      userId
     );
     return res;
   }
 
-  static async createCal(data) {
-    let res = await this.request(`calendar/create`, data, "post");
+  static async getCalViews(viewType) {
+    let res = await this.request(`calendar/cal-views`, viewType);
     return res;
   }
 
-  static async getCalViews(id, viewType) {
-    let res = await this.request(`calendar/cal-views`, id, viewType);
-    return res;
-  }
-
-  static async getBeginHours(id, businessBeginsHour, hourTitle) {
+  static async getBeginHours(businessBeginsHour, hourTitle) {
     let res = await this.request(
       `calendar/begin-hours`,
-      id,
       businessBeginsHour,
       hourTitle
     );
     return res;
   }
 
-  static async getEndtHours(id, businessEndsHour, hourTitle) {
+  static async getEndtHours(businessEndsHour, hourTitle) {
     let res = await this.request(
       `calendar/end-hours`,
-      id,
       businessEndsHour,
       hourTitle
+    );
+    return res;
+  }
+
+  static async createCal(username, data) {
+    let res = await this.request(`calendar/${username}/create`, data, "post");
+    return res;
+  }
+
+  static async updateCal(username, data) {
+    let res = await this.request(`calendar/${username}/edit`, data, "patch");
+    return res;
+  }
+
+  static async deleteCal(username, id, data) {
+    let res = await this.request(
+      `calendar/${username}/delete/${id}`,
+      data,
+      "delete"
     );
     return res;
   }

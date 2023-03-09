@@ -1,10 +1,57 @@
-import { useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import UserContext from "../Auth/UserContext";
-import { Link } from "react-router-dom";
+import useLocalStorage from "../hooks/useLocalStorage";
+import { Link, useNavigate } from "react-router-dom";
+import jwt from "jsonwebtoken";
 import Calendar from "../Calendar/Calendar";
+import ComeAwayApi from "../api/api";
+
+export const TOKEN_STORAGE_ID = "comeaway-token";
 
 const Home = () => {
-  const { currentUser } = useContext(UserContext);
+  const navigate = useNavigate();
+  const [token, setToken] = useLocalStorage(TOKEN_STORAGE_ID);
+  const [infoLoaded, setInfoLoaded] = useState(false);
+  const [calUserId, setCalUserId] = useState();
+  const [formError, setFormError] = useState([]);
+
+  const { currentUser, setCurrentUser } = useContext(UserContext);
+  useEffect(
+    function loadUserInfo() {
+      async function getCurrentUser() {
+        if (token) {
+          try {
+            let { username } = jwt.decode(token);
+            ComeAwayApi.token = token;
+            let currentUser = await ComeAwayApi.getCurrentUser(username);
+            setCurrentUser(currentUser);
+          } catch (errors) {
+            setFormError(errors);
+            setCurrentUser(null);
+          }
+        }
+        setInfoLoaded(true);
+      }
+      setInfoLoaded(false);
+      getCurrentUser();
+    },
+    [token]
+  );
+
+  useEffect(() => {
+    async function getCalDataByUser() {
+      const userCalData = await ComeAwayApi.getCalData();
+      try {
+        if (currentUser)
+          userCalData.map((d) => {
+            if (currentUser.id === d.userId) setCalUserId(d.userId);
+          });
+      } catch (errors) {
+        return;
+      }
+    }
+    getCalDataByUser();
+  }, []);
 
   const loggedOutUser = () => {
     return (
@@ -27,33 +74,31 @@ const Home = () => {
   };
 
   const loggedInUser = () => {
-    if (!currentUser.calendarId)
+    if (currentUser.id !== calUserId) {
       return (
         <div>
           <h2>
             Welcome Back, {currentUser.firstName || currentUser.username}!
           </h2>
-          <p>
-            <Link className="btn btn-primary" to="/calendar/create">
-              Create Calendar
-            </Link>
-          </p>
+          <p>Lets get started with created a calendar</p>
+          <Link
+            className="btn btn-primary"
+            to={`/calendar/${currentUser.username}/create`}
+          >
+            Create Calendar
+          </Link>
         </div>
       );
-
-    if (currentUser.calendarId)
+    } else {
       return (
         <div>
-          <div>
-            <h2>
-              Welcome Back, {currentUser.firstName || currentUser.username}!
-            </h2>
-          </div>
-          <div>
-            <Calendar />
-          </div>
+          <h2>
+            Welcome Back, {currentUser.firstName || currentUser.username}!
+          </h2>
+          <Calendar />
         </div>
       );
+    }
   };
 
   return (

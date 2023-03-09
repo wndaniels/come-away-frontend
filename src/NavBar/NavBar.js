@@ -1,43 +1,99 @@
-import { useContext } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import UserContext from "../Auth/UserContext";
+import ComeAwayApi from "../api/api";
+import useLocalStorage from "../hooks/useLocalStorage";
+import jwt from "jsonwebtoken";
+
+export const TOKEN_STORAGE_ID = "comeaway-token";
 
 const NavBar = () => {
-  const { currentUser, logout } = useContext(UserContext);
+  const navigate = useNavigate();
+  const { currentUser, setCurrentUser, logout } = useContext(UserContext);
+  const [token, setToken] = useLocalStorage(TOKEN_STORAGE_ID);
+  const [calUserId, setCalUserId] = useState([]);
+  const [infoLoaded, setInfoLoaded] = useState(false);
+  const [formError, setFormError] = useState([]);
+
+  useEffect(
+    function loadUserInfo() {
+      async function getCurrentUser() {
+        if (token) {
+          try {
+            let { username } = jwt.decode(token);
+            ComeAwayApi.token = token;
+            let currentUser = await ComeAwayApi.getCurrentUser(username);
+            setCurrentUser(currentUser);
+          } catch (errors) {
+            setFormError(errors);
+            setCurrentUser(null);
+          }
+        }
+        setInfoLoaded(true);
+      }
+      setInfoLoaded(false);
+      getCurrentUser();
+    },
+    [token]
+  );
+
+  useEffect(() => {
+    async function getCalDataByUser() {
+      const userCalData = await ComeAwayApi.getCalData();
+      try {
+        if (currentUser)
+          userCalData.map((d) => {
+            if (currentUser.id === d.userId) setCalUserId(d.userId);
+          });
+      } catch (errors) {
+        return;
+      }
+    }
+    getCalDataByUser();
+  }, []);
 
   const loggedInUser = () => {
-    if (!currentUser.calendarId)
+    if (currentUser.id === calUserId) {
       return (
         <ul className="navbar-nav ml-auto">
           <li className="nav-item mr-4">
-            <NavLink className="nav-link" to="/calendar/create">
-              Create Calendar
-            </NavLink>
-          </li>
-          <li className="nav-item mr-4">
-            <NavLink className="nav-link" to="/:username/profile/edit">
-              Profile
-            </NavLink>
-          </li>
-          <li className="nav-item mr-4">
-            <NavLink className="nav-link" to="/" onClick={logout}>
-              Logout
-            </NavLink>
-          </li>
-        </ul>
-      );
-    if (currentUser.calendarId)
-      return (
-        <ul className="navbar-nav ml-auto">
-          <li className="nav-item mr-4">
-            <NavLink className="nav-link" to="/calendar/edit">
+            <NavLink
+              className="nav-link"
+              to={`/calendar/${currentUser.username}/edit`}
+            >
               Edit Calendar
             </NavLink>
           </li>
           <li className="nav-item mr-4">
             <NavLink
               className="nav-link"
-              to={`/${currentUser.username}/profile/edit`}
+              to={`/profile/${currentUser.username}/edit`}
+            >
+              Profile
+            </NavLink>
+          </li>
+          <li className="nav-item mr-4">
+            <NavLink className="nav-link" onClick={logout}>
+              Logout
+            </NavLink>
+          </li>
+        </ul>
+      );
+    } else {
+      return (
+        <ul className="navbar-nav ml-auto">
+          <li className="nav-item mr-4">
+            <NavLink
+              className="nav-link"
+              to={`/calendar/${currentUser.username}/create`}
+            >
+              Create Calendar
+            </NavLink>
+          </li>
+          <li className="nav-item mr-4">
+            <NavLink
+              className="nav-link"
+              to={`/profile/${currentUser.username}/edit`}
             >
               Profile
             </NavLink>
@@ -49,6 +105,7 @@ const NavBar = () => {
           </li>
         </ul>
       );
+    }
   };
 
   const loggedOutUser = () => {
@@ -74,7 +131,6 @@ const NavBar = () => {
         <Link className="navbar-brand" to="/">
           COME/AWAY
         </Link>
-
         {currentUser ? loggedInUser() : loggedOutUser()}
       </div>
     </nav>

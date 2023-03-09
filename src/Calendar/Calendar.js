@@ -1,4 +1,7 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useContext } from "react";
+import UserContext from "../Auth/UserContext";
+import useLocalStorage from "../hooks/useLocalStorage";
+import jwt from "jsonwebtoken";
 import { DayPilot, DayPilotCalendar } from "@daypilot/daypilot-lite-react";
 import ComeAwayApi from "../api/api";
 
@@ -14,37 +17,88 @@ const styles = {
   },
 };
 
+export const TOKEN_STORAGE_ID = "comeaway-token";
+
 const Calendar = () => {
+  const { currentUser, setCurrentUser } = useContext(UserContext);
+  const [token, setToken] = useLocalStorage(TOKEN_STORAGE_ID);
+  const [formError, setFormError] = useState([]);
+  const [infoLoaded, setInfoLoaded] = useState(false);
   const calendarRef = useRef(null);
+  const [calViewData, setCalViewData] = useState();
+  const [calAvailBegin, setCalAvailBegin] = useState();
+  const [calAvailEnd, setCalAvailEnd] = useState();
+  const [calUserId, setCalUserId] = useState();
+  const [calData, setCalData] = useState({
+    viewType: calViewData,
+    businessBeginsHour: calAvailBegin,
+    businessEndsHour: calAvailEnd,
+  });
 
-  const [calViewData, setCalViewData] = useState([]);
-  const [calAvailBegin, setCalAvailBegin] = useState([]);
-  const [calAvailEnd, setCalAvailEnd] = useState([]);
-
-  async function getViewData(viewType) {
-    const viewRes = await ComeAwayApi.getCalViews(viewType);
-    setCalViewData(viewRes);
-  }
-
-  async function getBeginHoursData(businessBeginsHour) {
-    const beginHourRes = await ComeAwayApi.getBeginHours(businessBeginsHour);
-    setCalAvailBegin(beginHourRes);
-  }
-
-  async function getEndHourData(businessEndsHour) {
-    const endHourRes = await ComeAwayApi.getEndtHours(businessEndsHour);
-    setCalAvailEnd(endHourRes);
-  }
+  useEffect(
+    function loadUserInfo() {
+      async function getCurrentUser() {
+        if (token) {
+          try {
+            let { username } = jwt.decode(token);
+            ComeAwayApi.token = token;
+            let currentUser = await ComeAwayApi.getCurrentUser(username);
+            setCurrentUser(currentUser);
+          } catch (errors) {
+            setFormError(errors);
+            setCurrentUser(null);
+          }
+        }
+        setInfoLoaded(true);
+      }
+      setInfoLoaded(false);
+      getCurrentUser();
+    },
+    [token]
+  );
 
   useEffect(() => {
-    getViewData([]);
-    getBeginHoursData([]);
-    getEndHourData([]);
-  }, []);
+    async function getCalDataByUser() {
+      const userCalData = await ComeAwayApi.getCalData();
+      userCalData.map((d) => {
+        if (currentUser.id === d.userId) {
+          try {
+            setCalViewData(d.viewType);
+            setCalAvailBegin(d.businessBeginsHour);
+            setCalAvailEnd(d.businessEndsHour);
+            setCalUserId(d.userId);
+          } catch (error) {
+            return;
+          }
+        }
+      });
+    }
+
+    async function getCalendarData() {
+      let userCalendar;
+      try {
+        userCalendar = {
+          viewType: calViewData,
+          businessBeginsHour: calAvailBegin,
+          businessEndsHour: calAvailEnd,
+        };
+      } catch (errors) {
+        return;
+      }
+
+      setCalData(userCalendar);
+    }
+
+    getCalDataByUser([]);
+    getCalendarData([]);
+  }, [currentUser]);
 
   const onTimeRangeSelected = async (args) => {
     const dp = calendarRef.current.control;
-    const modal = await DayPilot.Modal.prompt("Create a new event", "Event 1");
+    const modal = await DayPilot.Modal.prompt(
+      "Please enter your name(s)",
+      "John Doe"
+    );
     dp.clearSelection();
     if (!modal.result) return;
     dp.events.add({
@@ -71,9 +125,9 @@ const Calendar = () => {
     <div style={styles.wrap}>
       <div style={styles.main}>
         <DayPilotCalendar
-          {...calViewData[1]}
-          {...calAvailBegin[11]}
-          {...calAvailEnd[19]}
+          viewType={calData.viewType}
+          businessBeginsHour={calData.businessBeginsHour}
+          businessEndsHour={calData.businessEndsHour}
           durationBarVisible={false}
           headerDateFormat={"dddd M/dd"}
           headerHeight={50}
