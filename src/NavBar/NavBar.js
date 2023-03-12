@@ -8,12 +8,12 @@ import jwt from "jsonwebtoken";
 export const TOKEN_STORAGE_ID = "comeaway-token";
 
 const NavBar = () => {
-  const navigate = useNavigate();
-  const { currentUser, setCurrentUser, logout } = useContext(UserContext);
   const [token, setToken] = useLocalStorage(TOKEN_STORAGE_ID);
+  const [calByUser, setCalByUser] = useState([]);
   const [calUserId, setCalUserId] = useState([]);
   const [infoLoaded, setInfoLoaded] = useState(false);
   const [formError, setFormError] = useState([]);
+  const { currentUser, setCurrentUser, logout } = useContext(UserContext);
 
   useEffect(
     function loadUserInfo() {
@@ -34,52 +34,46 @@ const NavBar = () => {
       setInfoLoaded(false);
       getCurrentUser();
     },
-    [token]
+    [token, setCurrentUser]
   );
 
   useEffect(() => {
     async function getCalDataByUser() {
       const userCalData = await ComeAwayApi.getCalData();
-      try {
-        if (currentUser)
-          userCalData.map((d) => {
-            if (currentUser.id === d.userId) setCalUserId(d.userId);
-          });
-      } catch (errors) {
-        return;
-      }
+      if (currentUser)
+        userCalData.map((d) => {
+          try {
+            if (currentUser.id === d.userId) {
+              setCalUserId(d.userId);
+            }
+          } catch (errors) {
+            return null;
+          }
+        });
     }
+
     getCalDataByUser();
-  }, []);
+  }, [currentUser]);
+
+  const loggedOutUser = () => {
+    return (
+      <ul className="navbar-nav ml-auto">
+        <li className="nav-item mr-4">
+          <NavLink className="nav-link" to="/login">
+            Login
+          </NavLink>
+        </li>
+        <li className="nav-item mr-4">
+          <NavLink className="nav-link" to="/signup">
+            Sign Up
+          </NavLink>
+        </li>
+      </ul>
+    );
+  };
 
   const loggedInUser = () => {
-    if (currentUser.id === calUserId) {
-      return (
-        <ul className="navbar-nav ml-auto">
-          <li className="nav-item mr-4">
-            <NavLink
-              className="nav-link"
-              to={`/calendar/${currentUser.username}/edit`}
-            >
-              Edit Calendar
-            </NavLink>
-          </li>
-          <li className="nav-item mr-4">
-            <NavLink
-              className="nav-link"
-              to={`/profile/${currentUser.username}/edit`}
-            >
-              Profile
-            </NavLink>
-          </li>
-          <li className="nav-item mr-4">
-            <NavLink className="nav-link" onClick={logout}>
-              Logout
-            </NavLink>
-          </li>
-        </ul>
-      );
-    } else {
+    if (currentUser.id !== calUserId) {
       return (
         <ul className="navbar-nav ml-auto">
           <li className="nav-item mr-4">
@@ -105,24 +99,33 @@ const NavBar = () => {
           </li>
         </ul>
       );
+    } else {
+      return (
+        <ul className="navbar-nav ml-auto">
+          <li className="nav-item mr-4">
+            <NavLink
+              className="nav-link"
+              to={`/calendar/${currentUser.username}/edit`}
+            >
+              Edit Calendar
+            </NavLink>
+          </li>
+          <li className="nav-item mr-4">
+            <NavLink
+              className="nav-link"
+              to={`/profile/${currentUser.username}/edit`}
+            >
+              Profile
+            </NavLink>
+          </li>
+          <li className="nav-item mr-4">
+            <NavLink className="nav-link" onClick={logout}>
+              Logout
+            </NavLink>
+          </li>
+        </ul>
+      );
     }
-  };
-
-  const loggedOutUser = () => {
-    return (
-      <ul className="navbar-nav ml-auto">
-        <li className="nav-item mr-4">
-          <NavLink className="nav-link" to="/login">
-            Login
-          </NavLink>
-        </li>
-        <li className="nav-item mr-4">
-          <NavLink className="nav-link" to="/signup">
-            Sign Up
-          </NavLink>
-        </li>
-      </ul>
-    );
   };
 
   return (

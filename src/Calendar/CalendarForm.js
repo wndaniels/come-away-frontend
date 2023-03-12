@@ -22,7 +22,7 @@ const CalendarForm = () => {
     businessEndsHour: 0,
     userId: currentUser.id,
   });
-  const [calendar, setCalendar] = useState();
+  const [calendar, setCalendar] = useState([]);
   const [formError, setFormError] = useState([]);
 
   useEffect(
@@ -84,15 +84,14 @@ const CalendarForm = () => {
 
     try {
       createdCal = await ComeAwayApi.createCal(username, calendarData);
-      console.log(createdCal);
     } catch (errors) {
       setFormError([errors]);
       return;
     }
-    navigate("/calendar");
+
     setFormData((f) => ({ ...f }));
     setFormError([]);
-    setCalendar(createdCal);
+    navigate("/");
   }
 
   function handleViewChange(evt) {
@@ -125,7 +124,7 @@ const CalendarForm = () => {
         <h1 className="mb-3">Create Calendar</h1>
         <div className="card">
           <div className="card-body">
-            <Form method="post" onSubmit={handleSubmit}>
+            <Form method="post">
               <div className="d-grid gap-3">
                 <div className="form-group">
                   {formError.length ? (
@@ -187,7 +186,7 @@ const CalendarForm = () => {
                 </div>
               </div>
 
-              <button className="btn btn-sm btn-primary">
+              <button onClick={handleSubmit} className="btn btn-sm btn-primary">
                 Create Calendar
               </button>
             </Form>

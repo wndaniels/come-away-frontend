@@ -14,8 +14,8 @@ const Home = () => {
   const [infoLoaded, setInfoLoaded] = useState(false);
   const [calUserId, setCalUserId] = useState();
   const [formError, setFormError] = useState([]);
-
   const { currentUser, setCurrentUser } = useContext(UserContext);
+
   useEffect(
     function loadUserInfo() {
       async function getCurrentUser() {
@@ -35,23 +35,23 @@ const Home = () => {
       setInfoLoaded(false);
       getCurrentUser();
     },
-    [token]
+    [token, setCurrentUser]
   );
 
   useEffect(() => {
     async function getCalDataByUser() {
       const userCalData = await ComeAwayApi.getCalData();
-      try {
-        if (currentUser)
-          userCalData.map((d) => {
+      if (currentUser)
+        userCalData.map((d) => {
+          try {
             if (currentUser.id === d.userId) setCalUserId(d.userId);
-          });
-      } catch (errors) {
-        return;
-      }
+          } catch (errors) {
+            return null;
+          }
+        });
     }
     getCalDataByUser();
-  }, []);
+  }, [currentUser]);
 
   const loggedOutUser = () => {
     return (

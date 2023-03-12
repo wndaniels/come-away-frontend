@@ -10,6 +10,7 @@ export const TOKEN_STORAGE_ID = "comeaway-token";
 
 const Main = () => {
   const [infoLoaded, setInfoLoaded] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [token, setToken] = useLocalStorage(TOKEN_STORAGE_ID);
 
@@ -34,11 +35,6 @@ const Main = () => {
     [token]
   );
 
-  function logout() {
-    setCurrentUser(null);
-    setToken(null);
-  }
-
   async function signup(signupData) {
     try {
       let token = await ComeAwayApi.signup(signupData);
@@ -61,6 +57,15 @@ const Main = () => {
     }
   }
 
+  function logout() {
+    try {
+      setCurrentUser(null);
+      setToken(null);
+    } catch (errors) {
+      return { success: false, errors };
+    }
+  }
+
   if (!infoLoaded) return;
 
   return (
@@ -69,8 +74,8 @@ const Main = () => {
         currentUser,
         setCurrentUser,
         login,
-        logout,
         signup,
+        logout,
       }}
     >
       <NavBar />

@@ -106,11 +106,10 @@ const CalendarForm = () => {
 
     let username = currentUser.username;
 
-    let createdCal;
+    let updatedCal;
 
     try {
-      createdCal = await ComeAwayApi.updateCal(username, calendarData);
-      console.log(createdCal);
+      updatedCal = await ComeAwayApi.updateCal(username, calendarData);
     } catch (errors) {
       setFormError([errors]);
       return;
@@ -118,7 +117,6 @@ const CalendarForm = () => {
     navigate("/calendar");
     setFormData((f) => ({ ...f }));
     setFormError([]);
-    setCalendar(createdCal);
   }
 
   function handleViewChange(evt) {
@@ -152,6 +150,7 @@ const CalendarForm = () => {
     } catch (errors) {
       return;
     }
+    navigate("/");
   }
 
   if (!infoLoaded) return;
@@ -162,7 +161,7 @@ const CalendarForm = () => {
         <h1 className="mb-3">Edit Calendar</h1>
         <div className="card">
           <div className="card-body">
-            <Form method="patch" onSubmit={handleSubmit}>
+            <Form method="patch">
               <div className="d-grid gap-3">
                 <div className="form-group">
                   {formError.length ? (
@@ -223,19 +222,16 @@ const CalendarForm = () => {
                   </select>
                 </div>
               </div>
-            </Form>
-            <div>
-              <button onClick={handleSubmit} className="btn btn-sm btn-primary">
+              <button
+                onClick={handleSubmit}
+                className="btn btn-sm btn-primary mr-3"
+              >
                 Update Calendar
               </button>
-              <Link
-                onClick={handleDelete}
-                className="btn btn-sm btn-danger"
-                to="/"
-              >
+              <button onClick={handleDelete} className="btn btn-sm btn-danger">
                 Delete
-              </Link>
-            </div>
+              </button>
+            </Form>
           </div>
         </div>
       </div>
