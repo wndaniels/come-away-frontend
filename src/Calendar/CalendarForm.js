@@ -22,7 +22,7 @@ const CalendarForm = () => {
     businessEndsHour: 0,
     userId: currentUser.id,
   });
-  const [calendar, setCalendar] = useState([]);
+
   const [formError, setFormError] = useState([]);
 
   useEffect(

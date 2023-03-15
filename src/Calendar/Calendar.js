@@ -2,7 +2,11 @@ import { useState, useRef, useEffect, useContext } from "react";
 import UserContext from "../Auth/UserContext";
 import useLocalStorage from "../hooks/useLocalStorage";
 import jwt from "jsonwebtoken";
-import { DayPilot, DayPilotCalendar } from "@daypilot/daypilot-lite-react";
+import {
+  DayPilot,
+  DayPilotCalendar,
+  DayPilotNavigator,
+} from "@daypilot/daypilot-lite-react";
 import ComeAwayApi from "../api/api";
 
 const styles = {
@@ -95,9 +99,15 @@ const Calendar = () => {
 
   const onTimeRangeSelected = async (args) => {
     const dp = calendarRef.current.control;
-    const modal = await DayPilot.Modal.prompt(
-      "Please enter your name(s)",
-      "John Doe"
+    const modal = await DayPilot.Modal.form(
+      [
+        { name: "Name:", id: "name" },
+        { name: "Note:", id: "note" },
+      ],
+      {
+        name: "John Doe",
+        note: "Congratulations! We can't wait to meet your baby!",
+      }
     );
     dp.clearSelection();
     if (!modal.result) return;
@@ -135,6 +145,7 @@ const Calendar = () => {
           heightSpec={"BusinessHoursNoScroll"}
           hourWidth={80}
           cellHeight={40}
+          // startDate={"2023-05-13"}
           eventDeleteHandling={"Update"}
           timeRangeSelectedHandling={"Enabled"}
           onTimeRangeSelected={onTimeRangeSelected}

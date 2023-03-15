@@ -62,6 +62,8 @@ const CalendarForm = () => {
     getCalDataByUser([]);
   }, []);
 
+  console.log(calByUser);
+
   useEffect(function getCalData() {
     async function getViewData() {
       try {

@@ -41,6 +41,13 @@ class ComeAwayApi {
     return res.user;
   }
 
+  /** Get all users */
+
+  static async getAllUsers() {
+    let res = await this.request(`users`);
+    return res;
+  }
+
   /** Get token for login from username, password. */
 
   static async login(data) {
@@ -119,6 +126,11 @@ class ComeAwayApi {
       data,
       "delete"
     );
+    return res;
+  }
+
+  static async addVisit(data) {
+    let res = await this.request(`visitors/add`, data, "post");
     return res;
   }
 }

@@ -23,7 +23,7 @@ const router = createBrowserRouter(
       <Route exact path="/" element={<Home />} />
       <Route exact path="/login" element={<LoginForm />} />
       <Route exact path="/signup" element={<SignUpForm />} />
-      <Route exact path="/:username/visit" element={<VisitorForm />} />
+      <Route exact path="/calendar/:username/visit" element={<VisitorForm />} />
       <Route element={<PrivatePaths />}>
         <Route
           exact

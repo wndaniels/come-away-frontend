@@ -1,74 +1,69 @@
 import React, { useContext, useEffect, useState } from "react";
 import useLocalStorage from "../hooks/useLocalStorage";
-import { Form, useNavigate } from "react-router-dom";
+import { Form, useNavigate, useParams } from "react-router-dom";
 import ComeAwayApi from "../api/api";
 import UserContext from "../Auth/UserContext";
 import jwt from "jsonwebtoken";
 import Alert from "../Common/Alert";
 
-export const TOKEN_STORAGE_ID = "comeaway-token";
+// export const TOKEN_STORAGE_ID = "comeaway-token";
 
 const VisitorForm = () => {
   const navigate = useNavigate();
-  const { currentUser, setCurrentUser } = useContext(UserContext);
+  // const { currentUser, setCurrentUser } = useContext(UserContext);
   const [infoLoaded, setInfoLoaded] = useState(false);
-  const [token, setToken] = useLocalStorage(TOKEN_STORAGE_ID);
-  const [calViews, setCalViews] = useState([]);
+  // const [token, setToken] = useLocalStorage(TOKEN_STORAGE_ID);
+  const [paramUserId, setParamUserId] = useState([]);
+  const [calId, setCalId] = useState([]);
   const [calAvailBegin, setCalAvailBegin] = useState([]);
   const [calAvailEnd, setCalAvailEnd] = useState([]);
-  const [calByUser, setCalByUser] = useState([]);
   const [formData, setFormData] = useState({
-    viewType: calByUser.viewType,
-    businessBeginsHour: calByUser.businessBeginsHour,
-    businessEndsHour: calByUser.businessEndsHour,
+    fullName: "",
+    note: "",
+    startTime: 0,
+    endTime: 0,
+    calendarId: calId.id,
   });
 
-  const [calendar, setCalendar] = useState();
+  const [visit, setVisit] = useState();
   const [formError, setFormError] = useState([]);
 
+  const params = useParams();
+
   useEffect(
-    function loadUserInfo() {
-      async function getCurrentUser() {
-        if (token) {
-          try {
-            let { username } = jwt.decode(token);
-            ComeAwayApi.token = token;
-            let currentUser = await ComeAwayApi.getCurrentUser(username);
-            setCurrentUser(currentUser);
-          } catch (errors) {
-            setFormError(errors);
-            setCurrentUser(null);
-          }
+    function loadUsersInfo() {
+      async function getUsers() {
+        const userData = await ComeAwayApi.getAllUsers();
+        try {
+          userData.map((d) => {
+            if (params.username === d.username) setParamUserId(d);
+          });
+        } catch (errors) {
+          return;
         }
         setInfoLoaded(true);
       }
       setInfoLoaded(false);
-      getCurrentUser();
+      getUsers([]);
     },
-    [token]
+    [params.username]
   );
 
   useEffect(() => {
-    async function getCalDataByUser() {
-      const userCalData = await ComeAwayApi.getCalData();
+    async function getCalIdByUser() {
+      const calData = await ComeAwayApi.getCalData();
       try {
-        if (currentUser)
-          userCalData.map((d) => {
-            if (currentUser.id === d.userId) setCalByUser(d);
-          });
+        calData.map((i) => {
+          if (paramUserId.id === i.userId) setCalId(i);
+        });
       } catch (errors) {
         return;
       }
     }
-    getCalDataByUser();
-  }, []);
+    getCalIdByUser([]);
+  }, [paramUserId]);
 
   useEffect(function getCalData() {
-    async function getViewData() {
-      const viewRes = await ComeAwayApi.getCalViews();
-      setCalViews(viewRes);
-    }
-
     async function getBeginHoursData() {
       const beginHourRes = await ComeAwayApi.getBeginHours();
       setCalAvailBegin(beginHourRes);
@@ -79,7 +74,6 @@ const VisitorForm = () => {
       setCalAvailEnd(endHourRes);
     }
 
-    getViewData([]);
     getBeginHoursData([]);
     getEndHourData([]);
   }, []);
@@ -87,33 +81,31 @@ const VisitorForm = () => {
   async function handleSubmit(evt) {
     evt.preventDefault();
 
-    let calendarData = {
-      viewType: formData.viewType,
-      businessBeginsHour: formData.businessBeginsHour,
-      businessEndsHour: formData.businessEndsHour,
-      userId: currentUser.id,
+    let visitData = {
+      fullName: formData.fullName,
+      note: formData.note,
+      startTime: formData.startTime,
+      endTime: formData.endTime,
+      calendarId: calId.id,
     };
 
-    console.log(calendarData);
-
-    let createdCal;
+    let createdVisit;
 
     try {
-      createdCal = await ComeAwayApi.updateCal(calendarData);
-      console.log(createdCal);
+      createdVisit = await ComeAwayApi.addVisit(visitData);
+      console.log(createdVisit);
     } catch (errors) {
       setFormError([errors]);
       return;
     }
-    navigate("/calendar");
+    // navigate("/calendar");
     setFormData((f) => ({ ...f }));
     setFormError([]);
-    setCalendar(createdCal);
+    setVisit(createdVisit);
   }
 
-  function handleViewChange(evt) {
+  function handleChange(evt) {
     const { name, value } = evt.target;
-
     setFormData((f) => ({
       ...f,
       [name]: value,
@@ -133,12 +125,12 @@ const VisitorForm = () => {
     setFormError([]);
   }
 
-  if (!infoLoaded) return;
+  if (!infoLoaded) return <h3>Loading...</h3>;
 
   return (
     <div className="CalendarForm">
       <div className="container col-md-6 offset-md-3 col-lg-4 offset-lg-4">
-        <h1 className="mb-3">Edit Calendar</h1>
+        <h1 className="mb-3">Schedule a Visit!</h1>
         <div className="card">
           <div className="card-body">
             <Form method="patch" onSubmit={handleSubmit}>
@@ -150,56 +142,61 @@ const VisitorForm = () => {
                       messages={["All fields must be complete."]}
                     ></Alert>
                   ) : null}
-                  <label htmlFor="viewType">* Select Calendar View:</label>
-                  <select
-                    name="viewType"
-                    className="form-control"
-                    onChange={handleViewChange}
-                    defaultValue={calByUser.viewType}
-                  >
-                    {calViews &&
-                      calViews.map((v, id) => (
-                        <option value={v.viewType} key={id}>
-                          {v.viewType}
-                        </option>
-                      ))}
-                  </select>
-                </div>
+                  <div className="form-group">
+                    <label htmlFor="fullName">* Name of Visitor(s):</label>
+                    <input
+                      name="fullName"
+                      type="text"
+                      onChange={handleChange}
+                      className="form-control mb-3"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="note">Leave a note for the family:</label>
+                    <textarea
+                      name="note"
+                      type="text"
+                      onChange={handleChange}
+                      className="form-control mb-3"
+                    />
+                  </div>
 
-                <div className="form-group">
-                  <label htmlFor="businessBeginsHour">
-                    * Select Start Time:
-                  </label>
-                  <select
-                    name="businessBeginsHour"
-                    className="form-control"
-                    defaultValue={calByUser.businessBeginsHour}
-                    onChange={handleHourChange}
-                  >
-                    {calAvailBegin &&
-                      calAvailBegin.map((s, id) => (
-                        <option value={s.businessBeginsHour} key={id}>
-                          {s.hourTitle}
-                        </option>
-                      ))}
-                  </select>
-                </div>
+                  <div className="form-group">
+                    <label htmlFor="startTime">
+                      * What time would you like to visit?:
+                    </label>
+                    <select
+                      name="startTime"
+                      className="form-control mb-3"
+                      onChange={handleHourChange}
+                    >
+                      {calAvailBegin &&
+                        calAvailBegin.map((s, id) => (
+                          <option value={s.businessBeginsHour} key={id}>
+                            {s.hourTitle}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
 
-                <div className="form-group">
-                  <label htmlFor="businessEndsHour">* Select End Time:</label>
-                  <select
-                    name="businessEndsHour"
-                    className="form-control mb-3"
-                    defaultValue={calByUser.businessEndsHour}
-                    onChange={handleHourChange}
-                  >
-                    {calAvailEnd &&
-                      calAvailEnd.map((e, id) => (
-                        <option value={e.businessEndsHour} key={id}>
-                          {e.hourTitle}
-                        </option>
-                      ))}
-                  </select>
+                  <div className="form-group">
+                    <label htmlFor="endTime">
+                      * Select an end time for your visit.
+                      <i> (Please try to limit visits to 1 hour)</i>:
+                    </label>
+                    <select
+                      name="endTime"
+                      className="form-control mb-3"
+                      onChange={handleHourChange}
+                    >
+                      {calAvailEnd &&
+                        calAvailEnd.map((e, id) => (
+                          <option value={e.businessEndsHour} key={id}>
+                            {e.hourTitle}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
                 </div>
               </div>
 
