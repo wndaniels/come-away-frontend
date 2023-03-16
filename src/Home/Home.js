@@ -80,10 +80,10 @@ const Home = () => {
           <h2>
             Welcome Back, {currentUser.firstName || currentUser.username}!
           </h2>
-          <p>Lets get started with created a calendar</p>
+          <p>Lets get started with creating your visiting calendar!</p>
           <Link
             className="btn btn-primary"
-            to={`/calendar/${currentUser.username}/create`}
+            to={`/${currentUser.username}/calendar/setup/1`}
           >
             Create Calendar
           </Link>

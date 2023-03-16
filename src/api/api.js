@@ -129,8 +129,27 @@ class ComeAwayApi {
     return res;
   }
 
-  static async addVisit(data) {
-    let res = await this.request(`visitors/add`, data, "post");
+  /**
+   * DUE DATE DATA
+   */
+
+  static async getDays(id, day) {
+    let res = await this.request(`due-date/days`, id, day);
+    return res;
+  }
+
+  static async getMonths(id, month) {
+    let res = await this.request(`due-date/months`, id, month);
+    return res;
+  }
+
+  static async getYears(id, year) {
+    let res = await this.request(`due-date/years`, id, year);
+    return res;
+  }
+
+  static async createDueDate(username, data) {
+    let res = await this.request(`due-date/${username}/create`, data, "post");
     return res;
   }
 }

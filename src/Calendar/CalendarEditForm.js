@@ -62,8 +62,6 @@ const CalendarForm = () => {
     getCalDataByUser([]);
   }, []);
 
-  console.log(calByUser);
-
   useEffect(function getCalData() {
     async function getViewData() {
       try {
@@ -158,7 +156,7 @@ const CalendarForm = () => {
   if (!infoLoaded) return;
 
   return (
-    <div className="CalendarForm">
+    <div className="CalendarEditForm">
       <div className="container col-md-6 offset-md-3 col-lg-4 offset-lg-4">
         <h1 className="mb-3">Edit Calendar</h1>
         <div className="card">

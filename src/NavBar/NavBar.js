@@ -79,7 +79,7 @@ const NavBar = () => {
           <li className="nav-item mr-4">
             <NavLink
               className="nav-link"
-              to={`/calendar/${currentUser.username}/create`}
+              to={`/${currentUser.username}/calendar/setup/1`}
             >
               Create Calendar
             </NavLink>
@@ -87,7 +87,7 @@ const NavBar = () => {
           <li className="nav-item mr-4">
             <NavLink
               className="nav-link"
-              to={`/profile/${currentUser.username}/edit`}
+              to={`/${currentUser.username}/profile/edit`}
             >
               Profile
             </NavLink>
@@ -105,7 +105,7 @@ const NavBar = () => {
           <li className="nav-item mr-4">
             <NavLink
               className="nav-link"
-              to={`/calendar/${currentUser.username}/edit`}
+              to={`/${currentUser.username}/calendar/edit`}
             >
               Edit Calendar
             </NavLink>
@@ -113,7 +113,7 @@ const NavBar = () => {
           <li className="nav-item mr-4">
             <NavLink
               className="nav-link"
-              to={`/profile/${currentUser.username}/edit`}
+              to={`/${currentUser.username}/profile/edit`}
             >
               Profile
             </NavLink>

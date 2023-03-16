@@ -145,7 +145,7 @@ const Calendar = () => {
           heightSpec={"BusinessHoursNoScroll"}
           hourWidth={80}
           cellHeight={40}
-          // startDate={"2023-05-13"}
+          startDate={"2023-05-13"}
           eventDeleteHandling={"Update"}
           timeRangeSelectedHandling={"Enabled"}
           onTimeRangeSelected={onTimeRangeSelected}
