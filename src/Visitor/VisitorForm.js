@@ -63,20 +63,23 @@ const VisitorForm = () => {
     getCalIdByUser([]);
   }, [paramUserId]);
 
-  useEffect(function getCalData() {
-    async function getBeginHoursData() {
-      const beginHourRes = await ComeAwayApi.getBeginHours();
-      setCalAvailBegin(beginHourRes);
-    }
+  useEffect(
+    function getCalData() {
+      async function getBeginHoursData() {
+        const beginHourRes = await ComeAwayApi.getBeginHours();
+        setCalAvailBegin(beginHourRes);
+      }
 
-    async function getEndHourData() {
-      const endHourRes = await ComeAwayApi.getEndtHours();
-      setCalAvailEnd(endHourRes);
-    }
+      async function getEndHourData() {
+        const endHourRes = await ComeAwayApi.getEndtHours();
+        setCalAvailEnd(endHourRes);
+      }
 
-    getBeginHoursData([]);
-    getEndHourData([]);
-  }, []);
+      getBeginHoursData([]);
+      getEndHourData([]);
+    },
+    [calId.businessBeginsHour]
+  );
 
   async function handleSubmit(evt) {
     evt.preventDefault();
@@ -125,10 +128,24 @@ const VisitorForm = () => {
     setFormError([]);
   }
 
+  const startTimeKey = Math.min(calId.businessBeginsHour);
+  const endTimeKey = Math.max(calId.businessEndsHour);
+
+  let options = [];
+
+  for (let i = startTimeKey; i <= endTimeKey; i++) {
+    const timeValue = calAvailBegin[i];
+    options.push(
+      <option key={i} value={i}>
+        {timeValue.hourTitle}
+      </option>
+    );
+  }
+
   if (!infoLoaded) return <h3>Loading...</h3>;
 
   return (
-    <div className="CalendarForm">
+    <div className="VisitorForm">
       <div className="container col-md-6 offset-md-3 col-lg-4 offset-lg-4">
         <h1 className="mb-3">Schedule a Visit!</h1>
         <div className="card">
@@ -170,38 +187,31 @@ const VisitorForm = () => {
                       className="form-control mb-3"
                       onChange={handleHourChange}
                     >
-                      {calAvailBegin &&
-                        calAvailBegin.map((s, id) => (
-                          <option value={s.businessBeginsHour} key={id}>
-                            {s.hourTitle}
-                          </option>
-                        ))}
+                      <option hidden>-</option>
+                      {options}
                     </select>
                   </div>
 
                   <div className="form-group">
                     <label htmlFor="endTime">
-                      * Select an end time for your visit.
-                      <i> (Please try to limit visits to 1 hour)</i>:
+                      * Select an end time for your visit:
+                      <br />
+                      <i>(Visits are limited to 1 hour increments)</i>
                     </label>
                     <select
                       name="endTime"
                       className="form-control mb-3"
                       onChange={handleHourChange}
                     >
-                      {calAvailEnd &&
-                        calAvailEnd.map((e, id) => (
-                          <option value={e.businessEndsHour} key={id}>
-                            {e.hourTitle}
-                          </option>
-                        ))}
+                      <option hidden>-</option>
+                      {options}
                     </select>
                   </div>
                 </div>
               </div>
 
               <button className="btn btn-sm btn-primary">
-                Update Calendar
+                Schedule your visit
               </button>
             </Form>
           </div>
