@@ -45,7 +45,7 @@ const DueDateForm = () => {
       setInfoLoaded(false);
       getCurrentUser();
     },
-    [token]
+    [token, setCurrentUser]
   );
 
   useEffect(function getDateData() {

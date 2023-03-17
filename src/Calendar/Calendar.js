@@ -29,6 +29,11 @@ const Calendar = () => {
   const [formError, setFormError] = useState([]);
   const [infoLoaded, setInfoLoaded] = useState(false);
   const calendarRef = useRef(null);
+  const [day, setDay] = useState();
+  const [month, setMonth] = useState();
+  const [year, setYear] = useState();
+  const [dueDate, setDueDate] = useState();
+  const [startDateFromDueDate, setStartDateFromDueDate] = useState();
   const [calViewData, setCalViewData] = useState();
   const [calAvailBegin, setCalAvailBegin] = useState();
   const [calAvailEnd, setCalAvailEnd] = useState();
@@ -55,16 +60,83 @@ const Calendar = () => {
         }
         setInfoLoaded(true);
       }
+
       setInfoLoaded(false);
       getCurrentUser();
     },
-    [token]
+    [token, setCurrentUser]
   );
+
+  useEffect(() => {
+    async function getDueDate() {
+      const dueDate = await ComeAwayApi.getAllDueDates();
+
+      dueDate.forEach((d) => {
+        if (currentUser?.id === d.userId) {
+          setDueDate(d);
+        }
+      });
+    }
+
+    getDueDate();
+  }, [currentUser?.id]);
+
+  useEffect(
+    function getDueDateData() {
+      async function getDayData() {
+        const dayData = await ComeAwayApi.getDays();
+
+        dayData.forEach((d) => {
+          if (dueDate?.dayId === d.id) {
+            setDay(d.id);
+          }
+        });
+      }
+
+      async function getMonthData() {
+        const monthData = await ComeAwayApi.getMonths();
+
+        monthData.forEach((m) => {
+          if (dueDate?.monthId === m.id) {
+            setMonth(m.id);
+          }
+        });
+      }
+
+      async function getYearData() {
+        const yearData = await ComeAwayApi.getYears();
+
+        yearData.forEach((y) => {
+          if (dueDate?.yearId === y.id) {
+            setYear(y.year);
+          }
+        });
+      }
+
+      getDayData([]);
+      getMonthData([]);
+      getYearData([]);
+    },
+    [dueDate?.dayId, dueDate?.monthId, dueDate?.yearId]
+  );
+
+  useEffect(() => {
+    async function createDueDateString() {
+      let date;
+      try {
+        date = new Date(year + "-" + month + "-" + day).toISOString();
+        setStartDateFromDueDate(date);
+      } catch (errors) {
+        return;
+      }
+    }
+    createDueDateString();
+  }, [year, month, day]);
 
   useEffect(() => {
     async function getCalDataByUser() {
       const userCalData = await ComeAwayApi.getCalData();
-      userCalData.map((d) => {
+      userCalData.forEach((d) => {
         if (currentUser.id === d.userId) {
           try {
             setCalViewData(d.viewType);
@@ -95,7 +167,15 @@ const Calendar = () => {
 
     getCalDataByUser([]);
     getCalendarData([]);
-  }, [currentUser]);
+  }, [
+    currentUser.id,
+    calAvailBegin,
+    calAvailEnd,
+    calViewData,
+    year,
+    month,
+    day,
+  ]);
 
   const onTimeRangeSelected = async (args) => {
     const dp = calendarRef.current.control;
@@ -145,11 +225,12 @@ const Calendar = () => {
           heightSpec={"BusinessHoursNoScroll"}
           hourWidth={80}
           cellHeight={40}
-          startDate={"2023-05-13"}
+          startDate={startDateFromDueDate}
           eventDeleteHandling={"Update"}
           timeRangeSelectedHandling={"Enabled"}
           onTimeRangeSelected={onTimeRangeSelected}
           onEventClick={onEventClick}
+          visibleStart={true}
           ref={calendarRef}
         />
       </div>
