@@ -152,6 +152,11 @@ class ComeAwayApi {
     let res = await this.request(`due-date/${username}/create`, data, "post");
     return res;
   }
+
+  static async getAllDueDates(data) {
+    let res = await this.request(`due-date`, data);
+    return res;
+  }
 }
 
 export default ComeAwayApi;

@@ -44,7 +44,7 @@ const CalendarForm = () => {
       setInfoLoaded(false);
       getCurrentUser();
     },
-    [token]
+    [token, setCurrentUser]
   );
 
   useEffect(function getCalData() {

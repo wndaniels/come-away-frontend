@@ -45,7 +45,7 @@ const CalendarForm = () => {
       setInfoLoaded(false);
       getCurrentUser();
     },
-    [token]
+    [token, setCurrentUser]
   );
 
   useEffect(() => {
@@ -53,14 +53,14 @@ const CalendarForm = () => {
       const userCalData = await ComeAwayApi.getCalData();
       try {
         userCalData.map((d) => {
-          if (currentUser.id === d.userId) setCalByUser(d);
+          if (currentUser?.id === d.userId) setCalByUser(d);
         });
       } catch (errors) {
         return;
       }
     }
     getCalDataByUser([]);
-  }, []);
+  }, [currentUser?.id]);
 
   useEffect(function getCalData() {
     async function getViewData() {
