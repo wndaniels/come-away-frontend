@@ -135,7 +135,7 @@ const Calendar = () => {
 
   useEffect(() => {
     async function getCalDataByUser() {
-      const userCalData = await ComeAwayApi.getCalData();
+      const userCalData = await ComeAwayApi.getAllCals();
       userCalData.forEach((d) => {
         if (currentUser.id === d.userId) {
           try {
@@ -211,17 +211,42 @@ const Calendar = () => {
     dp.events.update(e);
   };
 
+  async function getPreviousWeek() {
+    const dp = calendarRef.current.control;
+    dp.startDate = dp.startDate.addDays(-7);
+    dp.update();
+  }
+
+  async function getNextWeek() {
+    const dp = calendarRef.current.control;
+    dp.startDate = dp.startDate.addDays(7);
+    dp.update();
+  }
+
   return (
     <div style={styles.wrap}>
       <div style={styles.main}>
+        <div className="week-change">
+          <button
+            className="btn btn-sm btn-primary me-5"
+            onClick={getPreviousWeek}
+          >
+            Previous
+          </button>
+          WEEK
+          <button className="btn btn-sm btn-primary ms-5" onClick={getNextWeek}>
+            Next
+          </button>
+        </div>
         <DayPilotCalendar
           viewType={calData.viewType}
           businessBeginsHour={calData.businessBeginsHour}
           businessEndsHour={calData.businessEndsHour}
           durationBarVisible={false}
-          headerDateFormat={"dddd M/dd"}
+          headerDateFormat={"dddd MM/dd/yy"}
           headerHeight={50}
           headerTextWrappingEnabled={true}
+          allDayEvents={true}
           heightSpec={"BusinessHoursNoScroll"}
           hourWidth={80}
           cellHeight={40}

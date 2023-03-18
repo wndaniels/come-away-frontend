@@ -5,6 +5,7 @@ import ComeAwayApi from "../api/api";
 import UserContext from "../Auth/UserContext";
 import jwt from "jsonwebtoken";
 import Alert from "../Common/Alert";
+import DueDateEditForm from "../DueDate/DueDateEditForm";
 
 export const TOKEN_STORAGE_ID = "comeaway-token";
 
@@ -17,13 +18,13 @@ const CalendarForm = () => {
   const [calAvailBegin, setCalAvailBegin] = useState([]);
   const [calAvailEnd, setCalAvailEnd] = useState([]);
   const [calByUser, setCalByUser] = useState([]);
+  const [dueDateByUser, setDueDateByUser] = useState();
   const [formData, setFormData] = useState({
     viewType: calByUser.viewType,
     businessBeginsHour: calByUser.businessBeginsHour,
     businessEndsHour: calByUser.businessEndsHour,
   });
 
-  const [calendar, setCalendar] = useState();
   const [formError, setFormError] = useState([]);
 
   useEffect(
@@ -50,9 +51,9 @@ const CalendarForm = () => {
 
   useEffect(() => {
     async function getCalDataByUser() {
-      const userCalData = await ComeAwayApi.getCalData();
+      const userCalData = await ComeAwayApi.getAllCals();
       try {
-        userCalData.map((d) => {
+        userCalData.forEach((d) => {
           if (currentUser?.id === d.userId) setCalByUser(d);
         });
       } catch (errors) {
@@ -60,6 +61,21 @@ const CalendarForm = () => {
       }
     }
     getCalDataByUser([]);
+  }, [currentUser?.id]);
+
+  useEffect(() => {
+    async function getDueDateByUser() {
+      const dueDateData = await ComeAwayApi.getAllDueDates();
+
+      try {
+        dueDateData.forEach((d) => {
+          if (currentUser?.id === d.userId) setDueDateByUser(d);
+        });
+      } catch (errors) {
+        return;
+      }
+    }
+    getDueDateByUser();
   }, [currentUser?.id]);
 
   useEffect(function getCalData() {
@@ -95,7 +111,7 @@ const CalendarForm = () => {
     getEndHourData([]);
   }, []);
 
-  async function handleSubmit(evt) {
+  async function handleCalSubmit(evt) {
     evt.preventDefault();
 
     let calendarData = {
@@ -105,11 +121,13 @@ const CalendarForm = () => {
     };
 
     let username = currentUser.username;
+    let id = calByUser.id;
 
     let updatedCal;
 
     try {
-      updatedCal = await ComeAwayApi.updateCal(username, calendarData);
+      updatedCal = await ComeAwayApi.updateCal(username, id, calendarData);
+      console.log(updatedCal);
     } catch (errors) {
       setFormError([errors]);
       return;
@@ -119,7 +137,7 @@ const CalendarForm = () => {
     setFormError([]);
   }
 
-  function handleViewChange(evt) {
+  function handleTextChange(evt) {
     const { name, value } = evt.target;
 
     setFormData((f) => ({
@@ -130,7 +148,7 @@ const CalendarForm = () => {
     setFormError([]);
   }
 
-  function handleHourChange(evt) {
+  function handleIntChange(evt) {
     const { name, value } = evt.target;
 
     setFormData((f) => ({
@@ -141,7 +159,7 @@ const CalendarForm = () => {
     setFormError([]);
   }
 
-  async function handleDelete(evt) {
+  async function handleDeleteCal(evt) {
     let username = currentUser.username;
     let id = calByUser.id;
 
@@ -153,11 +171,26 @@ const CalendarForm = () => {
     navigate("/");
   }
 
+  async function handleDeleteDueDate(evt) {
+    let username = currentUser.username;
+    let id = dueDateByUser.id;
+
+    try {
+      await ComeAwayApi.deleteDueDate(username, id);
+    } catch (errors) {
+      return;
+    }
+    navigate("/");
+  }
+
   if (!infoLoaded) return;
 
   return (
     <div className="CalendarEditForm">
       <div className="container col-md-6 offset-md-3 col-lg-4 offset-lg-4">
+        <div>
+          <DueDateEditForm />
+        </div>
         <h1 className="mb-3">Edit Calendar</h1>
         <div className="card">
           <div className="card-body">
@@ -174,7 +207,7 @@ const CalendarForm = () => {
                   <select
                     name="viewType"
                     className="form-control"
-                    onChange={handleViewChange}
+                    onChange={handleTextChange}
                   >
                     <option hidden>-</option>
                     {calViews &&
@@ -193,7 +226,7 @@ const CalendarForm = () => {
                   <select
                     name="businessBeginsHour"
                     className="form-control"
-                    onChange={handleHourChange}
+                    onChange={handleIntChange}
                   >
                     <option hidden>-</option>
                     {calAvailBegin &&
@@ -210,25 +243,36 @@ const CalendarForm = () => {
                   <select
                     name="businessEndsHour"
                     className="form-control mb-3"
-                    onChange={handleHourChange}
+                    onChange={handleIntChange}
                   >
                     <option hidden>-</option>
                     {calAvailEnd &&
                       calAvailEnd.map((e, id) => (
-                        <option value={e.businessEndsHour} key={id}>
+                        <option
+                          defaultValue={e}
+                          value={e.businessEndsHour}
+                          key={id}
+                        >
                           {e.hourTitle}
                         </option>
                       ))}
                   </select>
                 </div>
               </div>
+
               <button
-                onClick={handleSubmit}
-                className="btn btn-sm btn-primary mr-3"
+                onClick={handleCalSubmit}
+                className="btn btn-sm btn-primary "
               >
                 Update Calendar
               </button>
-              <button onClick={handleDelete} className="btn btn-sm btn-danger">
+              <button
+                onClick={() => {
+                  handleDeleteCal();
+                  handleDeleteDueDate();
+                }}
+                className="btn btn-sm btn-danger ms-3"
+              >
                 Delete
               </button>
             </Form>

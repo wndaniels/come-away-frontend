@@ -40,7 +40,7 @@ const Home = () => {
 
   useEffect(() => {
     async function getCalDataByUser() {
-      const userCalData = await ComeAwayApi.getCalData();
+      const userCalData = await ComeAwayApi.getAllCals();
       if (currentUser)
         userCalData.map((d) => {
           try {

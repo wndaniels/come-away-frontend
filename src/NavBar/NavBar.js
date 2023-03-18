@@ -13,6 +13,7 @@ const NavBar = () => {
   const [calUserId, setCalUserId] = useState([]);
   const [infoLoaded, setInfoLoaded] = useState(false);
   const [formError, setFormError] = useState([]);
+  const [dueDateByUser, setDueDateByUser] = useState();
   const { currentUser, setCurrentUser, logout } = useContext(UserContext);
 
   useEffect(
@@ -39,9 +40,9 @@ const NavBar = () => {
 
   useEffect(() => {
     async function getCalDataByUser() {
-      const userCalData = await ComeAwayApi.getCalData();
+      const userCalData = await ComeAwayApi.getAllCals();
       if (currentUser)
-        userCalData.map((d) => {
+        userCalData.forEach((d) => {
           try {
             if (currentUser.id === d.userId) {
               setCalUserId(d.userId);

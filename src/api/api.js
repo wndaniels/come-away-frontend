@@ -69,7 +69,7 @@ class ComeAwayApi {
     return res.user;
   }
 
-  static async getCalData(
+  static async getAllCals(
     id,
     viewType,
     businessBeginsHour,
@@ -115,14 +115,18 @@ class ComeAwayApi {
     return res;
   }
 
-  static async updateCal(username, data) {
-    let res = await this.request(`calendar/${username}/edit`, data, "patch");
+  static async updateCal(username, id, data) {
+    let res = await this.request(
+      `calendar/${id}/${username}/edit`,
+      data,
+      "patch"
+    );
     return res;
   }
 
   static async deleteCal(username, id, data) {
     let res = await this.request(
-      `calendar/${username}/delete/${id}`,
+      `calendar/${id}/${username}/delete`,
       data,
       "delete"
     );
@@ -155,6 +159,24 @@ class ComeAwayApi {
 
   static async getAllDueDates(data) {
     let res = await this.request(`due-date`, data);
+    return res;
+  }
+
+  static async editDueDate(username, id, data) {
+    let res = await this.request(
+      `due-date/${id}/${username}/edit`,
+      data,
+      "patch"
+    );
+    return res;
+  }
+
+  static async deleteDueDate(username, id, data) {
+    let res = await this.request(
+      `due-date/${id}/${username}/delete`,
+      data,
+      "delete"
+    );
     return res;
   }
 }

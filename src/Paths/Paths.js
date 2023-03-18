@@ -17,6 +17,7 @@ import CalendarForm from "../Calendar/CalendarForm";
 import CalendarEditForm from "../Calendar/CalendarEditForm";
 import VisitorForm from "../Visitor/VisitorForm";
 import DueDateForm from "../DueDate/DueDateForm";
+import DueDateEditForm from "../DueDate/DueDateEditForm";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -33,18 +34,18 @@ const router = createBrowserRouter(
         />
         <Route
           exact
+          path="/:username/calendar/setup/2"
+          element={<CalendarForm />}
+        />
+        <Route
+          exact
           path="/:username/due-date/edit"
-          element={<DueDateForm />}
+          element={<DueDateEditForm />}
         />
         <Route
           exact
           path="/:username/profile/edit"
           element={<ProfileEditForm />}
-        />
-        <Route
-          exact
-          path="/:username/calendar/setup/2"
-          element={<CalendarForm />}
         />
         <Route exact path="/:username/calendar" element={<Calendar />} />
         <Route
@@ -52,6 +53,7 @@ const router = createBrowserRouter(
           path="/:username/calendar/edit"
           element={<CalendarEditForm />}
         />
+
         <Route exact path="/:username/calendar/delete" />
       </Route>
       <Route path="*" element={<Navigate replace to="/" />} />

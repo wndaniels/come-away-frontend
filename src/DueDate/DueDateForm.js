@@ -5,7 +5,6 @@ import ComeAwayApi from "../api/api";
 import UserContext from "../Auth/UserContext";
 import jwt from "jsonwebtoken";
 import Alert from "../Common/Alert";
-import CalendarForm from "../Calendar/CalendarForm";
 
 export const TOKEN_STORAGE_ID = "comeaway-token";
 
@@ -17,6 +16,7 @@ const DueDateForm = () => {
   const [days, setDays] = useState([]);
   const [months, setMonths] = useState([]);
   const [years, setYears] = useState();
+  const [dueDateByUser, setDueDateByUser] = useState([]);
   const [formData, setFormData] = useState({
     babyName: "",
     yearId: 0,
@@ -24,6 +24,7 @@ const DueDateForm = () => {
     dayId: 0,
     userId: currentUser.id,
   });
+
   const [formError, setFormError] = useState([]);
 
   useEffect(
@@ -48,28 +49,44 @@ const DueDateForm = () => {
     [token, setCurrentUser]
   );
 
-  useEffect(function getDateData() {
-    async function getDaysData() {
-      const dayRes = await ComeAwayApi.getDays();
-      setDays(dayRes);
-    }
+  useEffect(
+    function getDateData() {
+      async function getDaysData() {
+        const dayRes = await ComeAwayApi.getDays();
+        setDays(dayRes);
+      }
 
-    async function getMonthsData() {
-      const monthRes = await ComeAwayApi.getMonths();
-      setMonths(monthRes);
-    }
+      async function getMonthsData() {
+        const monthRes = await ComeAwayApi.getMonths();
+        setMonths(monthRes);
+      }
 
-    async function getYearsData() {
-      const yearRes = await ComeAwayApi.getYears();
-      setYears(yearRes);
-    }
+      async function getYearsData() {
+        const yearRes = await ComeAwayApi.getYears();
+        setYears(yearRes);
+      }
 
-    getDaysData([]);
-    getMonthsData([]);
-    getYearsData([]);
-  }, []);
+      async function getDueDateByUser() {
+        const dueDateData = await ComeAwayApi.getAllDueDates();
 
-  async function handleSubmit(evt) {
+        try {
+          dueDateData.forEach((d) => {
+            if (currentUser?.id === d.userId) setDueDateByUser(d);
+          });
+        } catch (errors) {
+          return;
+        }
+      }
+
+      getDaysData([]);
+      getMonthsData([]);
+      getYearsData([]);
+      getDueDateByUser([]);
+    },
+    [currentUser?.id]
+  );
+
+  async function handleSubmitCreate(evt) {
     evt.preventDefault();
 
     let dueDateData = {
@@ -96,7 +113,37 @@ const DueDateForm = () => {
     navigate(`/${currentUser.username}/calendar/setup/2`);
   }
 
-  function handleChange(evt) {
+  async function handleSubmitUpdate(evt) {
+    evt.preventDefault();
+
+    let updateDueDateData = {
+      babyName: formData.babyName,
+      yearId: formData.yearId,
+      monthId: formData.monthId,
+      dayId: formData.dayId,
+    };
+
+    let username = currentUser.username;
+    let id = dueDateByUser.id;
+    let updateDueDate;
+
+    try {
+      updateDueDate = await ComeAwayApi.updateDueDate(
+        username,
+        id,
+        updateDueDateData
+      );
+    } catch (errors) {
+      setFormError([errors]);
+      return;
+    }
+
+    navigate("/calendar");
+    setFormData((f) => ({ ...f }));
+    setFormError([]);
+  }
+
+  function handleTextChange(evt) {
     const { name, value } = evt.target;
 
     setFormData((f) => ({
@@ -127,6 +174,12 @@ const DueDateForm = () => {
           <div className="card-body">
             <Form method="post">
               <div className="d-grid gap-3">
+                {formError.length ? (
+                  <Alert
+                    type="danger"
+                    messages={["All fields must be complete."]}
+                  ></Alert>
+                ) : null}
                 <div className="form-group">
                   <h1>Tell us about baby!</h1>
 
@@ -139,7 +192,7 @@ const DueDateForm = () => {
                       name="babyName"
                       type="text"
                       className="form-control mb-3"
-                      onChange={handleChange}
+                      onChange={handleTextChange}
                     />
                   </div>
 
@@ -195,7 +248,10 @@ const DueDateForm = () => {
                   </div>
                 </div>
               </div>
-              <button onClick={handleSubmit} className="btn btn-sm btn-primary">
+              <button
+                onClick={handleSubmitCreate}
+                className="btn btn-sm btn-primary"
+              >
                 Next
               </button>
             </Form>
