@@ -196,8 +196,12 @@ class ComeAwayApi {
     return res;
   }
 
-  static async deleteVisitor(id, data) {
-    let res = await this.request(`visitors/${id}/delete`, data, "delete");
+  static async deleteVisitor(id, username, data) {
+    let res = await this.request(
+      `visitors/${id}/${username}/delete`,
+      data,
+      "delete"
+    );
     return res;
   }
 }

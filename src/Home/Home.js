@@ -92,15 +92,17 @@ const Home = () => {
     } else {
       return (
         <div>
-          <h4>
-            Share this link with family and friends so they can schedule a visit
-            to meet your families newest edition!
-          </h4>
-          <h6 className="mb-3">
-            <Link to={`/${currentUser.username}/calendar/visit`}>
-              https://comeawayapp.com/{currentUser.username}/calendar/visit
-            </Link>
-          </h6>
+          <div className="m-5">
+            <h4>
+              Share this link with family and friends so they can schedule a
+              visit to meet your families newest edition!
+            </h4>
+            <h6 className="mb-3">
+              <Link to={`/${currentUser.username}/calendar/visit`}>
+                https://comeawayapp.com/{currentUser.username}/calendar/visit
+              </Link>
+            </h6>
+          </div>
 
           <Calendar />
         </div>
@@ -109,7 +111,7 @@ const Home = () => {
   };
 
   return (
-    <div className="Home">
+    <div className="Home m-5">
       <div className="container text-center">
         <h1 className="mb-4">COME/AWAY</h1>
         {currentUser ? loggedInUser() : loggedOutUser()}

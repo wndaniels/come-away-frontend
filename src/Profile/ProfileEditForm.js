@@ -57,7 +57,7 @@ const ProfileForm = () => {
   }
 
   return (
-    <div className="ProfileEditForm">
+    <div className="ProfileEditForm m-5">
       <div className="container col-md-6 offset-md-3 col-lg-4 offset-lg-4">
         <h1 className="mb-3">Profile Form</h1>
         <div className="card">

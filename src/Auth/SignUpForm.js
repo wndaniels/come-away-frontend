@@ -32,7 +32,7 @@ const SignUpForm = () => {
   };
 
   return (
-    <div className="SignUpForm">
+    <div className="SignUpForm m-5">
       <div className="container col-md-6 offset-md-3 col-lg-4 offset-lg-4">
         <h1 className="mb-3">Sign Up</h1>
         <div className="card">

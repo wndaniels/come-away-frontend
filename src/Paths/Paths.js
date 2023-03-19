@@ -27,6 +27,7 @@ const router = createBrowserRouter(
       <Route exact path="/login" element={<LoginForm />} />
       <Route exact path="/signup" element={<SignUpForm />} />
       <Route exact path="/:username/calendar/visit" element={<VisitorForm />} />
+      <Route exact path="/thankyou" element={<VistorConfirmation />} />
       <Route element={<PrivatePaths />}>
         <Route
           exact
@@ -54,7 +55,6 @@ const router = createBrowserRouter(
           path="/:username/calendar/edit"
           element={<CalendarEditForm />}
         />
-        <Route exact path="/thankyou" element={<VistorConfirmation />} />
         <Route exact path="/:username/calendar/delete" />
       </Route>
       <Route path="*" element={<Navigate replace to="/" />} />

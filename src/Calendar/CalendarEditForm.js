@@ -186,11 +186,11 @@ const CalendarForm = () => {
   if (!infoLoaded) return;
 
   return (
-    <div>
+    <div className="m-5">
       <div>
         <DueDateEditForm />
       </div>
-      <div className="CalendarEditForm">
+      <div className="CalendarEditForm mt-5">
         <div className="container col-md-6 offset-md-3 col-lg-4 offset-lg-4">
           <h1 className="mb-3">Edit Calendar</h1>
           <div className="card">
