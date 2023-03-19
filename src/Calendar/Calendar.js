@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import UserContext from "../Auth/UserContext";
 import useLocalStorage from "../hooks/useLocalStorage";
 import jwt from "jsonwebtoken";
@@ -24,6 +25,7 @@ const styles = {
 export const TOKEN_STORAGE_ID = "comeaway-token";
 
 const Calendar = () => {
+  const navigate = useNavigate();
   const { currentUser, setCurrentUser } = useContext(UserContext);
   const [token, setToken] = useLocalStorage(TOKEN_STORAGE_ID);
   const [formError, setFormError] = useState([]);
@@ -39,7 +41,10 @@ const Calendar = () => {
   const [calAvailEnd, setCalAvailEnd] = useState();
   const [calUserId, setCalUserId] = useState();
   const [calByUserId, setCalByUserId] = useState();
-  const [visitorData, setVisitorData] = useState([]);
+  const [visitorData, setVisitorData] = useState();
+  const [visitorDataForDisplay, setVisitorDataforDisplay] = useState([]);
+
+  const [update, setUpdate] = useState([]);
 
   const [calData, setCalData] = useState({
     viewType: calViewData,
@@ -50,22 +55,23 @@ const Calendar = () => {
   useEffect(
     function loadUserInfo() {
       async function getCurrentUser() {
-        if (token) {
-          try {
-            let { username } = jwt.decode(token);
-            ComeAwayApi.token = token;
-            let currentUser = await ComeAwayApi.getCurrentUser(username);
-            setCurrentUser(currentUser);
-          } catch (errors) {
-            setFormError(errors);
-            setCurrentUser(null);
-          }
+        try {
+          let { username } = jwt.decode(token);
+          ComeAwayApi.token = token;
+          let currentUser = await ComeAwayApi.getCurrentUser(username);
+          setCurrentUser(currentUser);
+          setInfoLoaded(true);
+        } catch (errors) {
+          setFormError(errors);
+          setCurrentUser(null);
         }
-        setInfoLoaded(true);
       }
 
       setInfoLoaded(false);
-      getCurrentUser();
+
+      if (token) {
+        getCurrentUser();
+      }
     },
     [token, setCurrentUser]
   );
@@ -183,7 +189,7 @@ const Calendar = () => {
   ]);
 
   useEffect(() => {
-    async function getVisitorData() {
+    async function getVisitorDataForDisplay() {
       const visitors = await ComeAwayApi.getAllVisitors();
 
       if (calByUserId?.id === visitors.calendarId)
@@ -194,20 +200,44 @@ const Calendar = () => {
             end: new DayPilot.Date(v.endTime),
             text: v.fullName,
           }));
-          setVisitorData(events);
+
+          setVisitorDataforDisplay(events);
         } catch (errors) {
           return;
         }
     }
+
+    async function getVisitorData() {
+      const visitors = await ComeAwayApi.getAllVisitors();
+      if (calByUserId?.id === visitors.calendarId)
+        try {
+          visitors.map((v) => {
+            setVisitorData(v);
+          });
+        } catch (errors) {
+          return;
+        }
+    }
+
+    getVisitorDataForDisplay();
     getVisitorData();
   }, [calByUserId?.id]);
 
+  async function handleDeleteVisitors(evt) {
+    let username = currentUser.username;
+    let id = visitorData.id;
+
+    try {
+      await ComeAwayApi.deleteVisitor(id, username);
+    } catch (errors) {
+      return;
+    }
+    // navigate("/");
+  }
+
   const onEventClick = async (args) => {
     const dp = calendarRef.current.control;
-    const modal = await DayPilot.Modal.prompt(
-      "Update event text:",
-      args.e.text()
-    );
+    const modal = await DayPilot.Modal.prompt(<div>Hello</div>);
     if (!modal.result) return;
     const e = args.e;
     e.data.text = modal.result;
@@ -229,7 +259,7 @@ const Calendar = () => {
   return (
     <div style={styles.wrap}>
       <div style={styles.main}>
-        <div className="week-change">
+        <div className="week-change m-4">
           <button
             className="btn btn-sm btn-primary me-5"
             onClick={getPreviousWeek}
@@ -254,8 +284,10 @@ const Calendar = () => {
           hourWidth={80}
           cellHeight={40}
           startDate={startDateFromDueDate}
-          events={visitorData}
+          events={visitorDataForDisplay}
+          // EventDoubleClickHandling={"Select"}
           eventDeleteHandling={"Update"}
+          onEventDeleted={handleDeleteVisitors}
           timeRangeSelectedHandling={"Enabled"}
           onEventClick={onEventClick}
           visibleStart={true}
