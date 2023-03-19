@@ -92,20 +92,22 @@ class ComeAwayApi {
     return res;
   }
 
-  static async getBeginHours(businessBeginsHour, hourTitle) {
+  static async getBeginHours(businessBeginsHour, hourTitle, isoTime) {
     let res = await this.request(
       `calendar/begin-hours`,
       businessBeginsHour,
-      hourTitle
+      hourTitle,
+      isoTime
     );
     return res;
   }
 
-  static async getEndtHours(businessEndsHour, hourTitle) {
+  static async getEndtHours(businessEndsHour, hourTitle, isoTime) {
     let res = await this.request(
       `calendar/end-hours`,
       businessEndsHour,
-      hourTitle
+      hourTitle,
+      isoTime
     );
     return res;
   }
@@ -177,6 +179,25 @@ class ComeAwayApi {
       data,
       "delete"
     );
+    return res;
+  }
+
+  /**
+   * VISITOR DATA
+   */
+
+  static async createVisit(data) {
+    let res = await this.request(`visitors/add`, data, "post");
+    return res;
+  }
+
+  static async getAllVisitors(data) {
+    let res = await this.request(`visitors`, data);
+    return res;
+  }
+
+  static async deleteVisitor(id, data) {
+    let res = await this.request(`visitors/${id}/delete`, data, "delete");
     return res;
   }
 }

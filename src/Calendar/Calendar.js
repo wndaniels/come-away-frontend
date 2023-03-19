@@ -38,6 +38,9 @@ const Calendar = () => {
   const [calAvailBegin, setCalAvailBegin] = useState();
   const [calAvailEnd, setCalAvailEnd] = useState();
   const [calUserId, setCalUserId] = useState();
+  const [calByUserId, setCalByUserId] = useState();
+  const [visitorData, setVisitorData] = useState([]);
+
   const [calData, setCalData] = useState({
     viewType: calViewData,
     businessBeginsHour: calAvailBegin,
@@ -136,9 +139,11 @@ const Calendar = () => {
   useEffect(() => {
     async function getCalDataByUser() {
       const userCalData = await ComeAwayApi.getAllCals();
+
       userCalData.forEach((d) => {
         if (currentUser.id === d.userId) {
           try {
+            setCalByUserId(d);
             setCalViewData(d.viewType);
             setCalAvailBegin(d.businessBeginsHour);
             setCalAvailEnd(d.businessEndsHour);
@@ -177,27 +182,25 @@ const Calendar = () => {
     day,
   ]);
 
-  const onTimeRangeSelected = async (args) => {
-    const dp = calendarRef.current.control;
-    const modal = await DayPilot.Modal.form(
-      [
-        { name: "Name:", id: "name" },
-        { name: "Note:", id: "note" },
-      ],
-      {
-        name: "John Doe",
-        note: "Congratulations! We can't wait to meet your baby!",
-      }
-    );
-    dp.clearSelection();
-    if (!modal.result) return;
-    dp.events.add({
-      start: args.start,
-      end: args.end,
-      id: DayPilot.guid(),
-      text: modal.result,
-    });
-  };
+  useEffect(() => {
+    async function getVisitorData() {
+      const visitors = await ComeAwayApi.getAllVisitors();
+
+      if (calByUserId?.id === visitors.calendarId)
+        try {
+          const events = visitors.map((v) => ({
+            id: v.id,
+            start: new DayPilot.Date(v.startTime),
+            end: new DayPilot.Date(v.endTime),
+            text: v.fullName,
+          }));
+          setVisitorData(events);
+        } catch (errors) {
+          return;
+        }
+    }
+    getVisitorData();
+  }, [calByUserId?.id]);
 
   const onEventClick = async (args) => {
     const dp = calendarRef.current.control;
@@ -251,9 +254,9 @@ const Calendar = () => {
           hourWidth={80}
           cellHeight={40}
           startDate={startDateFromDueDate}
+          events={visitorData}
           eventDeleteHandling={"Update"}
           timeRangeSelectedHandling={"Enabled"}
-          onTimeRangeSelected={onTimeRangeSelected}
           onEventClick={onEventClick}
           visibleStart={true}
           ref={calendarRef}

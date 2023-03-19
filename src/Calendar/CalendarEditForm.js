@@ -186,96 +186,98 @@ const CalendarForm = () => {
   if (!infoLoaded) return;
 
   return (
-    <div className="CalendarEditForm">
-      <div className="container col-md-6 offset-md-3 col-lg-4 offset-lg-4">
-        <div>
-          <DueDateEditForm />
-        </div>
-        <h1 className="mb-3">Edit Calendar</h1>
-        <div className="card">
-          <div className="card-body">
-            <Form method="patch">
-              <div className="d-grid gap-3">
-                <div className="form-group">
-                  {formError.length ? (
-                    <Alert
-                      type="danger"
-                      messages={["All fields must be complete."]}
-                    ></Alert>
-                  ) : null}
-                  <label htmlFor="viewType">* Select Calendar View:</label>
-                  <select
-                    name="viewType"
-                    className="form-control"
-                    onChange={handleTextChange}
-                  >
-                    <option hidden>-</option>
-                    {calViews &&
-                      calViews.map((v, id) => (
-                        <option value={v.viewType} key={id}>
-                          {v.viewType}
-                        </option>
-                      ))}
-                  </select>
+    <div>
+      <div>
+        <DueDateEditForm />
+      </div>
+      <div className="CalendarEditForm">
+        <div className="container col-md-6 offset-md-3 col-lg-4 offset-lg-4">
+          <h1 className="mb-3">Edit Calendar</h1>
+          <div className="card">
+            <div className="card-body">
+              <Form method="patch">
+                <div className="d-grid gap-3">
+                  <div className="form-group">
+                    {formError.length ? (
+                      <Alert
+                        type="danger"
+                        messages={["All fields must be complete."]}
+                      ></Alert>
+                    ) : null}
+                    <label htmlFor="viewType">* Select Calendar View:</label>
+                    <select
+                      name="viewType"
+                      className="form-control"
+                      onChange={handleTextChange}
+                    >
+                      <option hidden>-</option>
+                      {calViews &&
+                        calViews.map((v, id) => (
+                          <option value={v.viewType} key={id}>
+                            {v.viewType}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="businessBeginsHour">
+                      * Select Start Time:
+                    </label>
+                    <select
+                      name="businessBeginsHour"
+                      className="form-control"
+                      onChange={handleIntChange}
+                    >
+                      <option hidden>-</option>
+                      {calAvailBegin &&
+                        calAvailBegin.map((s, id) => (
+                          <option value={s.businessBeginsHour} key={id}>
+                            {s.hourTitle}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="businessEndsHour">* Select End Time:</label>
+                    <select
+                      name="businessEndsHour"
+                      className="form-control mb-3"
+                      onChange={handleIntChange}
+                    >
+                      <option hidden>-</option>
+                      {calAvailEnd &&
+                        calAvailEnd.map((e, id) => (
+                          <option
+                            defaultValue={e}
+                            value={e.businessEndsHour}
+                            key={id}
+                          >
+                            {e.hourTitle}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
                 </div>
 
-                <div className="form-group">
-                  <label htmlFor="businessBeginsHour">
-                    * Select Start Time:
-                  </label>
-                  <select
-                    name="businessBeginsHour"
-                    className="form-control"
-                    onChange={handleIntChange}
-                  >
-                    <option hidden>-</option>
-                    {calAvailBegin &&
-                      calAvailBegin.map((s, id) => (
-                        <option value={s.businessBeginsHour} key={id}>
-                          {s.hourTitle}
-                        </option>
-                      ))}
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="businessEndsHour">* Select End Time:</label>
-                  <select
-                    name="businessEndsHour"
-                    className="form-control mb-3"
-                    onChange={handleIntChange}
-                  >
-                    <option hidden>-</option>
-                    {calAvailEnd &&
-                      calAvailEnd.map((e, id) => (
-                        <option
-                          defaultValue={e}
-                          value={e.businessEndsHour}
-                          key={id}
-                        >
-                          {e.hourTitle}
-                        </option>
-                      ))}
-                  </select>
-                </div>
-              </div>
-
-              <button
-                onClick={handleCalSubmit}
-                className="btn btn-sm btn-primary "
-              >
-                Update Calendar
-              </button>
-              <button
-                onClick={() => {
-                  handleDeleteCal();
-                  handleDeleteDueDate();
-                }}
-                className="btn btn-sm btn-danger ms-3"
-              >
-                Delete
-              </button>
-            </Form>
+                <button
+                  onClick={handleCalSubmit}
+                  className="btn btn-sm btn-primary "
+                >
+                  Update Calendar
+                </button>
+                <button
+                  onClick={() => {
+                    handleDeleteCal();
+                    handleDeleteDueDate();
+                  }}
+                  className="btn btn-sm btn-danger ms-3"
+                >
+                  Delete
+                </button>
+              </Form>
+            </div>
           </div>
         </div>
       </div>

@@ -1,32 +1,33 @@
-import React, { useContext, useEffect, useState } from "react";
-import useLocalStorage from "../hooks/useLocalStorage";
+import React, { useEffect, useState } from "react";
 import { Form, useNavigate, useParams } from "react-router-dom";
 import ComeAwayApi from "../api/api";
-import UserContext from "../Auth/UserContext";
-import jwt from "jsonwebtoken";
 import Alert from "../Common/Alert";
-
-// export const TOKEN_STORAGE_ID = "comeaway-token";
+import moment from "moment";
 
 const VisitorForm = () => {
   const navigate = useNavigate();
-  // const { currentUser, setCurrentUser } = useContext(UserContext);
   const [infoLoaded, setInfoLoaded] = useState(false);
-  // const [token, setToken] = useLocalStorage(TOKEN_STORAGE_ID);
-  const [paramUserId, setParamUserId] = useState([]);
+  const [paramUser, setParamUser] = useState([]);
   const [calId, setCalId] = useState([]);
   const [calAvailBegin, setCalAvailBegin] = useState([]);
   const [calAvailEnd, setCalAvailEnd] = useState([]);
+  const [day, setDay] = useState();
+  const [month, setMonth] = useState();
+  const [year, setYear] = useState();
+  const [dueDate, setDueDate] = useState();
+  const [startDateFromDueDate, setStartDateFromDueDate] = useState();
+  const [visit, setVisit] = useState();
+  const [dateIsoValue, setDateIsoValue] = useState();
+  const [timeStartIsoValue, setTimeStartIsoValue] = useState();
+  const [timeEndIsoValue, setTimeEndIsoValue] = useState();
+  const [formError, setFormError] = useState([]);
   const [formData, setFormData] = useState({
     fullName: "",
     note: "",
-    startTime: 0,
-    endTime: 0,
+    startTime: "",
+    endTime: "",
     calendarId: calId.id,
   });
-
-  const [visit, setVisit] = useState();
-  const [formError, setFormError] = useState([]);
 
   const params = useParams();
 
@@ -35,8 +36,8 @@ const VisitorForm = () => {
       async function getUsers() {
         const userData = await ComeAwayApi.getAllUsers();
         try {
-          userData.map((d) => {
-            if (params.username === d.username) setParamUserId(d);
+          userData.forEach((d) => {
+            if (params.username === d.username) setParamUser(d);
           });
         } catch (errors) {
           return;
@@ -51,20 +52,20 @@ const VisitorForm = () => {
 
   useEffect(() => {
     async function getCalIdByUser() {
-      const calData = await ComeAwayApi.getCalData();
+      const calData = await ComeAwayApi.getAllCals();
       try {
-        calData.map((i) => {
-          if (paramUserId.id === i.userId) setCalId(i);
+        calData.forEach((i) => {
+          if (paramUser.id === i.userId) setCalId(i);
         });
       } catch (errors) {
         return;
       }
     }
     getCalIdByUser([]);
-  }, [paramUserId]);
+  }, [paramUser]);
 
   useEffect(
-    function getCalData() {
+    function getVisitingHoursData() {
       async function getBeginHoursData() {
         const beginHourRes = await ComeAwayApi.getBeginHours();
         setCalAvailBegin(beginHourRes);
@@ -72,6 +73,7 @@ const VisitorForm = () => {
 
       async function getEndHourData() {
         const endHourRes = await ComeAwayApi.getEndtHours();
+
         setCalAvailEnd(endHourRes);
       }
 
@@ -81,27 +83,95 @@ const VisitorForm = () => {
     [calId.businessBeginsHour]
   );
 
+  useEffect(() => {
+    async function getDueDate() {
+      const dueDate = await ComeAwayApi.getAllDueDates();
+
+      dueDate.forEach((d) => {
+        if (paramUser.id === d.userId) {
+          setDueDate(d);
+        }
+      });
+    }
+
+    getDueDate();
+  }, [paramUser.id]);
+
+  useEffect(
+    function getDueDateData() {
+      async function getDayData() {
+        const dayData = await ComeAwayApi.getDays();
+
+        dayData.forEach((d) => {
+          if (dueDate?.dayId === d.id) {
+            setDay(d.id);
+          }
+        });
+      }
+
+      async function getMonthData() {
+        const monthData = await ComeAwayApi.getMonths();
+
+        monthData.forEach((m) => {
+          if (dueDate?.monthId === m.id) {
+            setMonth(m.id);
+          }
+        });
+      }
+
+      async function getYearData() {
+        const yearData = await ComeAwayApi.getYears();
+
+        yearData.forEach((y) => {
+          if (dueDate?.yearId === y.id) {
+            setYear(y.year);
+          }
+        });
+      }
+
+      getDayData([]);
+      getMonthData([]);
+      getYearData([]);
+    },
+    [dueDate?.dayId, dueDate?.monthId, dueDate?.yearId]
+  );
+
+  useEffect(() => {
+    async function createDueDateString() {
+      try {
+        let date = new Date(year + "-" + month + "-" + day).toISOString();
+        setStartDateFromDueDate(date);
+      } catch (errors) {
+        return;
+      }
+    }
+    createDueDateString();
+  }, [year, month, day]);
+
   async function handleSubmit(evt) {
     evt.preventDefault();
+
+    const appendStartValues = dateIsoValue + "T" + timeStartIsoValue;
+    const appendEndValues = dateIsoValue + "T" + timeEndIsoValue;
 
     let visitData = {
       fullName: formData.fullName,
       note: formData.note,
-      startTime: formData.startTime,
-      endTime: formData.endTime,
+      visitDate: formData.visitDate,
+      startTime: appendStartValues,
+      endTime: appendEndValues,
       calendarId: calId.id,
     };
 
     let createdVisit;
 
     try {
-      createdVisit = await ComeAwayApi.addVisit(visitData);
-      console.log(createdVisit);
+      createdVisit = await ComeAwayApi.createVisit(visitData);
     } catch (errors) {
       setFormError([errors]);
       return;
     }
-    // navigate("/calendar");
+    navigate("/thankyou");
     setFormData((f) => ({ ...f }));
     setFormError([]);
     setVisit(createdVisit);
@@ -131,13 +201,27 @@ const VisitorForm = () => {
   const startTimeKey = Math.min(calId.businessBeginsHour);
   const endTimeKey = Math.max(calId.businessEndsHour);
 
-  let options = [];
+  let timeOptions = [];
 
   for (let i = startTimeKey; i <= endTimeKey; i++) {
     const timeValue = calAvailBegin[i];
-    options.push(
-      <option key={i} value={i}>
+
+    timeOptions.push(
+      <option key={i} value={timeValue.isoTime}>
         {timeValue.hourTitle}
+      </option>
+    );
+  }
+
+  const dateStr = startDateFromDueDate;
+  const dateObj = moment(dateStr, "YYYY-MM-DDTHH:mm:ss");
+  let visitDayOption = [];
+
+  for (let i = 0; i < 7; i++) {
+    const nextDate = dateObj.clone().add(i, "days");
+    visitDayOption.push(
+      <option key={i} value={nextDate.format("YYYY-MM-DD")}>
+        {nextDate.format("YYYY-MM-DD")}
       </option>
     );
   }
@@ -168,6 +252,7 @@ const VisitorForm = () => {
                       className="form-control mb-3"
                     />
                   </div>
+
                   <div className="form-group">
                     <label htmlFor="note">Leave a note for the family:</label>
                     <textarea
@@ -179,16 +264,30 @@ const VisitorForm = () => {
                   </div>
 
                   <div className="form-group">
+                    <label htmlFor="visitDate">
+                      * What day would you like to visit?
+                    </label>
+                    <select
+                      name="visitDate"
+                      className="form-control mb-3"
+                      onChange={(e) => setDateIsoValue(e.target.value)}
+                    >
+                      <option hidden>-</option>
+                      {visitDayOption}
+                    </select>
+                  </div>
+
+                  <div className="form-group">
                     <label htmlFor="startTime">
                       * What time would you like to visit?:
                     </label>
                     <select
                       name="startTime"
                       className="form-control mb-3"
-                      onChange={handleHourChange}
+                      onChange={(e) => setTimeStartIsoValue(e.target.value)}
                     >
                       <option hidden>-</option>
-                      {options}
+                      {timeOptions}
                     </select>
                   </div>
 
@@ -201,10 +300,10 @@ const VisitorForm = () => {
                     <select
                       name="endTime"
                       className="form-control mb-3"
-                      onChange={handleHourChange}
+                      onChange={(e) => setTimeEndIsoValue(e.target.value)}
                     >
                       <option hidden>-</option>
-                      {options}
+                      {timeOptions}
                     </select>
                   </div>
                 </div>

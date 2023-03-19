@@ -18,6 +18,7 @@ import CalendarEditForm from "../Calendar/CalendarEditForm";
 import VisitorForm from "../Visitor/VisitorForm";
 import DueDateForm from "../DueDate/DueDateForm";
 import DueDateEditForm from "../DueDate/DueDateEditForm";
+import VistorConfirmation from "../Visitor/VistorConfirmation";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -25,7 +26,7 @@ const router = createBrowserRouter(
       <Route exact path="/" element={<Home />} />
       <Route exact path="/login" element={<LoginForm />} />
       <Route exact path="/signup" element={<SignUpForm />} />
-      <Route exact path="/calendar/:username/visit" element={<VisitorForm />} />
+      <Route exact path="/:username/calendar/visit" element={<VisitorForm />} />
       <Route element={<PrivatePaths />}>
         <Route
           exact
@@ -53,7 +54,7 @@ const router = createBrowserRouter(
           path="/:username/calendar/edit"
           element={<CalendarEditForm />}
         />
-
+        <Route exact path="/thankyou" element={<VistorConfirmation />} />
         <Route exact path="/:username/calendar/delete" />
       </Route>
       <Route path="*" element={<Navigate replace to="/" />} />
