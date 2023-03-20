@@ -13,11 +13,9 @@ const CalendarForm = () => {
   const { currentUser, setCurrentUser } = useContext(UserContext);
   const [infoLoaded, setInfoLoaded] = useState(false);
   const [token, setToken] = useLocalStorage(TOKEN_STORAGE_ID);
-  const [calViews, setCalViews] = useState([]);
   const [calAvailBegin, setCalAvailBegin] = useState([]);
   const [calAvailEnd, setCalAvailEnd] = useState([]);
   const [formData, setFormData] = useState({
-    viewType: "",
     businessBeginsHour: 0,
     businessEndsHour: 0,
     userId: currentUser.id,
@@ -48,11 +46,6 @@ const CalendarForm = () => {
   );
 
   useEffect(function getCalData() {
-    async function getViewData() {
-      const viewRes = await ComeAwayApi.getCalViews();
-      setCalViews(viewRes);
-    }
-
     async function getBeginHoursData() {
       const beginHourRes = await ComeAwayApi.getBeginHours();
       setCalAvailBegin(beginHourRes);
@@ -63,7 +56,6 @@ const CalendarForm = () => {
       setCalAvailEnd(endHourRes);
     }
 
-    getViewData([]);
     getBeginHoursData([]);
     getEndHourData([]);
   }, []);
@@ -72,7 +64,6 @@ const CalendarForm = () => {
     evt.preventDefault();
 
     let calendarData = {
-      viewType: formData.viewType,
       businessBeginsHour: formData.businessBeginsHour,
       businessEndsHour: formData.businessEndsHour,
       userId: currentUser.id,
@@ -94,18 +85,7 @@ const CalendarForm = () => {
     navigate("/");
   }
 
-  function handleViewChange(evt) {
-    const { name, value } = evt.target;
-
-    setFormData((f) => ({
-      ...f,
-      [name]: value,
-    }));
-
-    setFormError([]);
-  }
-
-  function handleHourChange(evt) {
+  function handleChange(evt) {
     const { name, value } = evt.target;
 
     setFormData((f) => ({
@@ -126,28 +106,12 @@ const CalendarForm = () => {
           <div className="card-body">
             <Form method="post">
               <div className="d-grid gap-3">
-                <div className="form-group">
-                  {formError.length ? (
-                    <Alert
-                      type="danger"
-                      messages={["All fields must be complete."]}
-                    ></Alert>
-                  ) : null}
-                  <label htmlFor="viewType">* Select Calendar View:</label>
-                  <select
-                    name="viewType"
-                    className="form-control"
-                    onChange={handleViewChange}
-                  >
-                    <option hidden>-</option>
-                    {calViews &&
-                      calViews.map((v, id) => (
-                        <option value={v.viewType} key={id}>
-                          {v.viewType}
-                        </option>
-                      ))}
-                  </select>
-                </div>
+                {formError.length ? (
+                  <Alert
+                    type="danger"
+                    messages={["All fields must be complete."]}
+                  ></Alert>
+                ) : null}
 
                 <div className="form-group">
                   <label htmlFor="businessBeginsHour">
@@ -156,7 +120,7 @@ const CalendarForm = () => {
                   <select
                     name="businessBeginsHour"
                     className="form-control"
-                    onChange={handleHourChange}
+                    onChange={handleChange}
                   >
                     <option hidden>-</option>
                     {calAvailBegin &&
@@ -173,7 +137,7 @@ const CalendarForm = () => {
                   <select
                     name="businessEndsHour"
                     className="form-control mb-3"
-                    onChange={handleHourChange}
+                    onChange={handleChange}
                   >
                     <option hidden>-</option>
                     {calAvailEnd &&

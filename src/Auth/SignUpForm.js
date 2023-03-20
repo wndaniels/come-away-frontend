@@ -16,6 +16,11 @@ const SignUpForm = () => {
   });
   const [formErr, setFormErr] = useState([]);
 
+  /**
+   * Handles Form Submit:
+   *
+   * Calls signup function and if successful, navigates to homepage.
+   */
   async function handleSubmit(evt) {
     evt.preventDefault();
     let result = await signup(formData);
@@ -26,6 +31,9 @@ const SignUpForm = () => {
     }
   }
 
+  /**
+   * Handles update for form data fields.
+   */
   const handleChange = (evt) => {
     const { name, value } = evt.target;
     setFormData((l) => ({ ...l, [name]: value }));

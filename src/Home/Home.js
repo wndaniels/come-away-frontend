@@ -42,7 +42,7 @@ const Home = () => {
     async function getCalDataByUser() {
       const userCalData = await ComeAwayApi.getAllCals();
       if (currentUser)
-        userCalData.map((d) => {
+        userCalData.forEach((d) => {
           try {
             if (currentUser.id === d.userId) setCalUserId(d.userId);
           } catch (errors) {

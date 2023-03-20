@@ -4,14 +4,32 @@ import { useNavigate } from "react-router-dom";
 import { Form } from "react-router-dom";
 import UserContext from "./UserContext";
 
-const LoginForm = () => {
-  const { login } = useContext(UserContext);
+/**
+ * LOGIN FORM:
+ *
+ * Renders form and manages update to state on changes.
+ *
+ * On submission, calls login prop, navigates "/"
+ *
+ * Routes -> LoginForm -> Alert
+ * Routed as /login
+ *
+ */
+
+function LoginForm({ login }) {
   const navigate = useNavigate();
+  // const { login } = useContext(UserContext);
   const [formData, setFormData] = useState({
     username: "",
     password: "",
   });
   const [formErr, setFormErr] = useState([]);
+
+  /**
+   * Handle Form Submit:
+   *
+   * Calls login function prop and if successful, navigates to homepage.
+   */
 
   async function handleSubmit(evt) {
     evt.preventDefault();
@@ -23,6 +41,9 @@ const LoginForm = () => {
     }
   }
 
+  /**
+   * Handles update for form data fields.
+   */
   const handleChange = (evt) => {
     const { name, value } = evt.target;
     setFormData((l) => ({ ...l, [name]: value }));
@@ -67,6 +88,6 @@ const LoginForm = () => {
       </div>
     </div>
   );
-};
+}
 
 export default LoginForm;

@@ -187,17 +187,6 @@ const VisitorForm = () => {
     setFormError([]);
   }
 
-  function handleHourChange(evt) {
-    const { name, value } = evt.target;
-
-    setFormData((f) => ({
-      ...f,
-      [name]: parseInt(value),
-    }));
-
-    setFormError([]);
-  }
-
   const startTimeKey = Math.min(calId.businessBeginsHour);
   const endTimeKey = Math.max(calId.businessEndsHour);
 

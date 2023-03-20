@@ -9,11 +9,10 @@ export const TOKEN_STORAGE_ID = "comeaway-token";
 
 const NavBar = () => {
   const [token, setToken] = useLocalStorage(TOKEN_STORAGE_ID);
-  const [calByUser, setCalByUser] = useState([]);
   const [calUserId, setCalUserId] = useState([]);
   const [infoLoaded, setInfoLoaded] = useState(false);
   const [formError, setFormError] = useState([]);
-  const [dueDateByUser, setDueDateByUser] = useState();
+
   const { currentUser, setCurrentUser, logout } = useContext(UserContext);
 
   useEffect(

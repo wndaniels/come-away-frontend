@@ -14,13 +14,11 @@ const CalendarForm = () => {
   const { currentUser, setCurrentUser } = useContext(UserContext);
   const [infoLoaded, setInfoLoaded] = useState(false);
   const [token, setToken] = useLocalStorage(TOKEN_STORAGE_ID);
-  const [calViews, setCalViews] = useState([]);
   const [calAvailBegin, setCalAvailBegin] = useState([]);
   const [calAvailEnd, setCalAvailEnd] = useState([]);
   const [calByUser, setCalByUser] = useState([]);
   const [dueDateByUser, setDueDateByUser] = useState();
   const [formData, setFormData] = useState({
-    viewType: calByUser.viewType,
     businessBeginsHour: calByUser.businessBeginsHour,
     businessEndsHour: calByUser.businessEndsHour,
   });
@@ -79,15 +77,6 @@ const CalendarForm = () => {
   }, [currentUser?.id]);
 
   useEffect(function getCalData() {
-    async function getViewData() {
-      try {
-        const viewRes = await ComeAwayApi.getCalViews();
-        setCalViews(viewRes);
-      } catch (errors) {
-        return;
-      }
-    }
-
     async function getBeginHoursData() {
       try {
         const beginHourRes = await ComeAwayApi.getBeginHours();
@@ -106,7 +95,6 @@ const CalendarForm = () => {
       }
     }
 
-    getViewData([]);
     getBeginHoursData([]);
     getEndHourData([]);
   }, []);
@@ -115,7 +103,6 @@ const CalendarForm = () => {
     evt.preventDefault();
 
     let calendarData = {
-      viewType: formData.viewType,
       businessBeginsHour: formData.businessBeginsHour,
       businessEndsHour: formData.businessEndsHour,
     };
@@ -134,17 +121,6 @@ const CalendarForm = () => {
     }
     navigate("/calendar");
     setFormData((f) => ({ ...f }));
-    setFormError([]);
-  }
-
-  function handleTextChange(evt) {
-    const { name, value } = evt.target;
-
-    setFormData((f) => ({
-      ...f,
-      [name]: value,
-    }));
-
     setFormError([]);
   }
 
@@ -197,28 +173,12 @@ const CalendarForm = () => {
             <div className="card-body">
               <Form method="patch">
                 <div className="d-grid gap-3">
-                  <div className="form-group">
-                    {formError.length ? (
-                      <Alert
-                        type="danger"
-                        messages={["All fields must be complete."]}
-                      ></Alert>
-                    ) : null}
-                    <label htmlFor="viewType">* Select Calendar View:</label>
-                    <select
-                      name="viewType"
-                      className="form-control"
-                      onChange={handleTextChange}
-                    >
-                      <option hidden>-</option>
-                      {calViews &&
-                        calViews.map((v, id) => (
-                          <option value={v.viewType} key={id}>
-                            {v.viewType}
-                          </option>
-                        ))}
-                    </select>
-                  </div>
+                  {formError.length ? (
+                    <Alert
+                      type="danger"
+                      messages={["All fields must be complete."]}
+                    ></Alert>
+                  ) : null}
 
                   <div className="form-group">
                     <label htmlFor="businessBeginsHour">

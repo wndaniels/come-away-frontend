@@ -18,7 +18,7 @@ import CalendarEditForm from "../Calendar/CalendarEditForm";
 import VisitorForm from "../Visitor/VisitorForm";
 import DueDateForm from "../DueDate/DueDateForm";
 import DueDateEditForm from "../DueDate/DueDateEditForm";
-import VistorConfirmation from "../Visitor/VistorConfirmation";
+import VistorConfirmation from "../Visitor/VisitorConfirmation";
 
 const router = createBrowserRouter(
   createRoutesFromElements(

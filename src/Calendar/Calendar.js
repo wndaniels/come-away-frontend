@@ -3,11 +3,7 @@ import { useNavigate } from "react-router-dom";
 import UserContext from "../Auth/UserContext";
 import useLocalStorage from "../hooks/useLocalStorage";
 import jwt from "jsonwebtoken";
-import {
-  DayPilot,
-  DayPilotCalendar,
-  DayPilotNavigator,
-} from "@daypilot/daypilot-lite-react";
+import { DayPilot, DayPilotCalendar } from "@daypilot/daypilot-lite-react";
 import ComeAwayApi from "../api/api";
 
 const styles = {
@@ -211,7 +207,7 @@ const Calendar = () => {
       const visitors = await ComeAwayApi.getAllVisitors();
       if (calByUserId?.id === visitors.calendarId)
         try {
-          visitors.map((v) => {
+          visitors.forEach((v) => {
             setVisitorData(v);
           });
         } catch (errors) {
@@ -232,17 +228,16 @@ const Calendar = () => {
     } catch (errors) {
       return;
     }
-    // navigate("/");
   }
 
-  const onEventClick = async (args) => {
-    const dp = calendarRef.current.control;
-    const modal = await DayPilot.Modal.prompt(<div>Hello</div>);
-    if (!modal.result) return;
-    const e = args.e;
-    e.data.text = modal.result;
-    dp.events.update(e);
-  };
+  async function onEventClick() {
+    const modalHtml = `<div>
+        <h2>Name: ${visitorData.fullName}</h2>
+        <h2>Note:</h2>
+        ${visitorData.note}
+      </div>`;
+    DayPilot.Modal.alert(modalHtml);
+  }
 
   async function getPreviousWeek() {
     const dp = calendarRef.current.control;
@@ -272,7 +267,7 @@ const Calendar = () => {
           </button>
         </div>
         <DayPilotCalendar
-          viewType={calData.viewType}
+          viewType={"Week"}
           businessBeginsHour={calData.businessBeginsHour}
           businessEndsHour={calData.businessEndsHour}
           durationBarVisible={false}
@@ -284,12 +279,14 @@ const Calendar = () => {
           hourWidth={80}
           cellHeight={40}
           startDate={startDateFromDueDate}
+          startDay={startDateFromDueDate}
           events={visitorDataForDisplay}
-          // EventDoubleClickHandling={"Select"}
           eventDeleteHandling={"Update"}
           onEventDeleted={handleDeleteVisitors}
-          timeRangeSelectedHandling={"Enabled"}
           onEventClick={onEventClick}
+          eventMoveHandling={"Disabled"}
+          eventResizeHandling={"Disabled"}
+          timeRangeSelectedHandling={"Disabled"}
           visibleStart={true}
           ref={calendarRef}
         />
