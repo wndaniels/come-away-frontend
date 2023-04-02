@@ -1,23 +1,36 @@
-import React, { useContext } from "react";
-import LoginForm from "../LoginForm";
-import { render, screen, getAllByText } from "@testing-library/react";
+import React from "react";
+import { render } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import "@testing-library/jest-dom";
+import LoginForm from "../LoginForm";
+import UserContext from "../UserContext";
 
-jest.mock("../LoginForm");
+jest.mock("react-router-dom", () => ({
+  ...jest.requireActual("react-router-dom"),
+  useNavigate: () => jest.fn(),
+}));
 
-it("renders without crashingt", async () => {
-  const { asFragment } = await render(<LoginForm />);
+describe("LoginForm", () => {
+  it("renders without crashingt", () => {
+    const { asFragment } = render(
+      <Wrapper>
+        <LoginForm />
+      </Wrapper>
+    );
+    expect(asFragment()).toMatchSnapshot();
+  });
 
-  expect(asFragment(<LoginForm />)).toMatchSnapshot();
+  it("can find placeholder", () => {
+    const { getByPlaceholderText } = render(
+      <Wrapper>
+        <LoginForm />
+      </Wrapper>
+    );
+    const usernamePlaceholder = getByPlaceholderText(/username/i);
+    expect(usernamePlaceholder).toBeInTheDocument();
+  });
 });
 
-it("can find placeholder", async () => {
-  await render(<LoginForm />);
-  const usernamePlaceholder = screen.getAllByText(/"Username"/);
-  console.log(usernamePlaceholder);
-  expect(usernamePlaceholder).toBeInTheDocument();
-});
 // describe("LoginForm", () => {
 //   it("renders without crashing", () => {
 //     const mock = jest.fn(() => "I am a mock function");
@@ -44,3 +57,15 @@ it("can find placeholder", async () => {
 
 //   })
 // });
+
+function Wrapper({ children }) {
+  return (
+    <UserContext.Provider
+      value={{
+        login: jest.fn(),
+      }}
+    >
+      {children}
+    </UserContext.Provider>
+  );
+}

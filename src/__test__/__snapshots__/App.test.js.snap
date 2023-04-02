@@ -1,0 +1,76 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders without crashingt 1`] = `
+<DocumentFragment>
+  <nav
+    class="NavBar navbar navbar-expand-sm"
+  >
+    <div
+      class="container-fluid"
+    >
+      <a
+        class="navbar-brand"
+        href="/"
+      >
+        COME/AWAY
+      </a>
+      <ul
+        class="navbar-nav ml-auto"
+      >
+        <li
+          class="nav-item mr-4"
+        >
+          <a
+            class="nav-link"
+            href="/login"
+          >
+            Login
+          </a>
+        </li>
+        <li
+          class="nav-item mr-4"
+        >
+          <a
+            class="nav-link"
+            href="/signup"
+          >
+            Sign Up
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <div
+    class="Home m-5"
+  >
+    <div
+      class="container text-center"
+    >
+      <h1
+        class="mb-4"
+      >
+        COME/AWAY
+      </h1>
+      <div>
+        <p>
+          Finally, a scheduler for expecting parents. No more trying to facilitate visiting while dealing with the stressors of your new child! Let us take care of that for you.
+        </p>
+        <p>
+          <a
+            class="btn btn-primary"
+            href="/login"
+          >
+            Login
+          </a>
+          <a
+            class="btn btn-primary ms-3"
+            href="/signup"
+          >
+            Sign Up
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

@@ -1,7 +1,6 @@
 import Alert from "../Common/Alert.js";
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Form } from "react-router-dom";
 import UserContext from "./UserContext.js";
 
 /**
@@ -57,7 +56,7 @@ function LoginForm() {
         </h1>
         <div className="card">
           <div className="card-body">
-            <Form method="post" onSubmit={handleSubmit}>
+            <form method="post" onSubmit={handleSubmit}>
               <div className="d-grid gap-3">
                 <div className="form-group">
                   <input
@@ -86,7 +85,7 @@ function LoginForm() {
               <button onClick={handleSubmit} className="btn btn-sm btn-primary">
                 Login
               </button>
-            </Form>
+            </form>
           </div>
         </div>
       </div>
