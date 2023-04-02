@@ -1,8 +1,8 @@
-import Alert from "../Common/Alert";
+import Alert from "../Common/Alert.js";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Form } from "react-router-dom";
-import UserContext from "./UserContext";
+import UserContext from "./UserContext.js";
 
 const SignUpForm = () => {
   const { signup } = useContext(UserContext);

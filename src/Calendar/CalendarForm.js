@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-import useLocalStorage from "../hooks/useLocalStorage";
+import useLocalStorage from "../hooks/useLocalStorage.js";
 import { Form, useNavigate } from "react-router-dom";
-import ComeAwayApi from "../api/api";
-import UserContext from "../Auth/UserContext";
+import ComeAwayApi from "../Api/api.js";
+import UserContext from "../Auth/UserContext.js";
 import jwt from "jsonwebtoken";
-import Alert from "../Common/Alert";
+import Alert from "../Common/Alert.js";
 
 export const TOKEN_STORAGE_ID = "comeaway-token";
 
@@ -99,7 +99,7 @@ const CalendarForm = () => {
   if (!infoLoaded) return;
 
   return (
-    <div className="CalendarForm">
+    <div className="CalendarForm mt-5">
       <div className="container col-md-6 offset-md-3 col-lg-4 offset-lg-4">
         <h1 className="mb-3">Create Calendar</h1>
         <div className="card">

@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import UserContext from "../Auth/UserContext";
-import ComeAwayApi from "../api/api";
-import useLocalStorage from "../hooks/useLocalStorage";
+import { Link, NavLink } from "react-router-dom";
+import UserContext from "../Auth/UserContext.js";
+import ComeAwayApi from "../Api/api.js";
+import useLocalStorage from "../hooks/useLocalStorage.js";
 import jwt from "jsonwebtoken";
 
 export const TOKEN_STORAGE_ID = "comeaway-token";
@@ -93,7 +93,7 @@ const NavBar = () => {
             </NavLink>
           </li>
           <li className="nav-item mr-4">
-            <NavLink className="nav-link" to="/" onClick={logout}>
+            <NavLink className="nav-link" onClick={logout}>
               Logout
             </NavLink>
           </li>

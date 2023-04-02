@@ -1,8 +1,8 @@
 import { useState, useContext, useEffect } from "react";
-import UserContext from "../Auth/UserContext";
+import UserContext from "../Auth/UserContext.js";
 import { Form, useParams, useNavigate } from "react-router-dom";
-import Alert from "../Common/Alert";
-import ComeAwayApi from "../api/api";
+import Alert from "../Common/Alert.js";
+import ComeAwayApi from "../Api/api.js";
 
 const ProfileForm = () => {
   const navigate = useNavigate();

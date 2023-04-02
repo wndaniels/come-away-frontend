@@ -1,16 +1,15 @@
 import { useState, useEffect } from "react";
-import useLocalStorage from "./hooks/useLocalStorage";
+import useLocalStorage from "./hooks/useLocalStorage.js";
 import { Outlet } from "react-router-dom";
-import NavBar from "./NavBar/NavBar";
-import ComeAwayApi from "./api/api";
-import UserContext from "./Auth/UserContext";
+import NavBar from "./NavBar/NavBar.js";
+import ComeAwayApi from "./Api/api.js";
+import UserContext from "./Auth/UserContext.js";
 import jwt from "jsonwebtoken";
 
 export const TOKEN_STORAGE_ID = "comeaway-token";
 
-const Main = () => {
+function Main() {
   const [infoLoaded, setInfoLoaded] = useState(false);
-  const [loggedIn, setLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [token, setToken] = useLocalStorage(TOKEN_STORAGE_ID);
 
@@ -82,6 +81,6 @@ const Main = () => {
       <Outlet />
     </UserContext.Provider>
   );
-};
+}
 
 export default Main;

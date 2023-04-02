@@ -1,10 +1,9 @@
 import { useState, useRef, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import UserContext from "../Auth/UserContext";
-import useLocalStorage from "../hooks/useLocalStorage";
+import UserContext from "../Auth/UserContext.js";
+import useLocalStorage from "../hooks/useLocalStorage.js";
 import jwt from "jsonwebtoken";
 import { DayPilot, DayPilotCalendar } from "@daypilot/daypilot-lite-react";
-import ComeAwayApi from "../api/api";
+import ComeAwayApi from "../Api/api.js";
 
 const styles = {
   wrap: {
@@ -21,7 +20,6 @@ const styles = {
 export const TOKEN_STORAGE_ID = "comeaway-token";
 
 const Calendar = () => {
-  const navigate = useNavigate();
   const { currentUser, setCurrentUser } = useContext(UserContext);
   const [token, setToken] = useLocalStorage(TOKEN_STORAGE_ID);
   const [formError, setFormError] = useState([]);

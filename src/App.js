@@ -1,9 +1,8 @@
-import Paths from "./Paths/Paths";
-
+import Paths from "./Paths/Paths.js";
 import "./App.css";
 
-const App = () => {
+function App() {
   return <Paths />;
-};
+}
 
 export default App;

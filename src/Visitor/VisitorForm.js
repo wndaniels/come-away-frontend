@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Form, useNavigate, useParams } from "react-router-dom";
-import ComeAwayApi from "../api/api";
-import Alert from "../Common/Alert";
+import ComeAwayApi from "../Api/api.js";
+import Alert from "../Common/Alert.js";
 import moment from "moment";
 
 const VisitorForm = () => {

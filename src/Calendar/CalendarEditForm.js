@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import useLocalStorage from "../hooks/useLocalStorage";
-import { Form, Link, useNavigate } from "react-router-dom";
-import ComeAwayApi from "../api/api";
-import UserContext from "../Auth/UserContext";
+import useLocalStorage from "../hooks/useLocalStorage.js";
+import { Form, useNavigate } from "react-router-dom";
+import ComeAwayApi from "../Api/api.js";
+import UserContext from "../Auth/UserContext.js";
 import jwt from "jsonwebtoken";
-import Alert from "../Common/Alert";
-import DueDateEditForm from "../DueDate/DueDateEditForm";
+import Alert from "../Common/Alert.js";
+import DueDateEditForm from "../DueDate/DueDateEditForm.js";
 
 export const TOKEN_STORAGE_ID = "comeaway-token";
 

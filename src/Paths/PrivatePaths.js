@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import UserContext from "../Auth/UserContext";
+import UserContext from "../Auth/UserContext.js";
 
 const PrivatePaths = () => {
   const { currentUser } = useContext(UserContext);

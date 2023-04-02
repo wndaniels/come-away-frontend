@@ -1,16 +1,16 @@
 import { useState, useEffect, useContext } from "react";
-import UserContext from "../Auth/UserContext";
-import useLocalStorage from "../hooks/useLocalStorage";
-import { Link, useNavigate } from "react-router-dom";
+import UserContext from "../Auth/UserContext.js";
+import useLocalStorage from "../hooks/useLocalStorage.js";
+import { Link } from "react-router-dom";
 import jwt from "jsonwebtoken";
-import Calendar from "../Calendar/Calendar";
-import ComeAwayApi from "../api/api";
+import Calendar from "../Calendar/Calendar.js";
+import ComeAwayApi from "../Api/api.js";
 
 export const TOKEN_STORAGE_ID = "comeaway-token";
 
 const Home = () => {
-  const navigate = useNavigate();
   const [token, setToken] = useLocalStorage(TOKEN_STORAGE_ID);
+
   const [infoLoaded, setInfoLoaded] = useState(false);
   const [calUserId, setCalUserId] = useState();
   const [formError, setFormError] = useState([]);

@@ -1,8 +1,8 @@
-import Alert from "../Common/Alert";
+import Alert from "../Common/Alert.js";
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Form } from "react-router-dom";
-import UserContext from "./UserContext";
+import UserContext from "./UserContext.js";
 
 /**
  * LOGIN FORM:
@@ -16,9 +16,9 @@ import UserContext from "./UserContext";
  *
  */
 
-function LoginForm({ login }) {
+function LoginForm() {
   const navigate = useNavigate();
-  // const { login } = useContext(UserContext);
+  const { login } = useContext(UserContext);
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -29,7 +29,7 @@ function LoginForm({ login }) {
    * Handle Form Submit:
    *
    * Calls login function prop and if successful, navigates to homepage.
-   */
+   **/
 
   async function handleSubmit(evt) {
     evt.preventDefault();
@@ -52,7 +52,9 @@ function LoginForm({ login }) {
   return (
     <div className="LoginForm m-5">
       <div className="container col-md-6 offset-md-3 col-lg-4 offset-lg-4">
-        <h1 className="mb-3">Login</h1>
+        <h1 data-testid="header" className="mb-3">
+          Login
+        </h1>
         <div className="card">
           <div className="card-body">
             <Form method="post" onSubmit={handleSubmit}>
@@ -81,7 +83,9 @@ function LoginForm({ login }) {
                 <Alert type="danger" messages={formErr} />
               ) : null}
 
-              <button className="btn btn-sm btn-primary">Login</button>
+              <button onClick={handleSubmit} className="btn btn-sm btn-primary">
+                Login
+              </button>
             </Form>
           </div>
         </div>
