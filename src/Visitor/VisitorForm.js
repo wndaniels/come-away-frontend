@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import ComeAwayApi from "../Api/api";
+import { ComeAwayApi, getAllCals } from "../Api/api";
 import Alert from "../Common/Alert";
 import moment from "moment";
-import { waitFor } from "@testing-library/react";
+
+console.log(getAllCals());
+// const calData = ComeAwayApi.getAllCals();
+// console.log(calData);
 
 const VisitorForm = () => {
   const navigate = useNavigate();
@@ -36,8 +39,10 @@ const VisitorForm = () => {
     async function fetchData() {
       try {
         setInfoLoaded(false);
-        const calData = await ComeAwayApi.getAllCals();
+        const calData = getAllCals();
+        console.log(getAllCals());
         const userData = await ComeAwayApi.getAllUsers();
+
         if (userData) {
           const paramUserData = userData.find(
             (d) => params.username === d.username
@@ -131,8 +136,8 @@ const VisitorForm = () => {
 
   let timeOptions = [];
 
-  const startTimeKey = Math.min(calId.businessBeginsHour);
-  const endTimeKey = Math.max(calId.businessEndsHour);
+  const startTimeKey = calId.businessBeginsHour;
+  const endTimeKey = calId.businessEndsHour;
 
   for (let i = startTimeKey; i <= endTimeKey; i++) {
     if (calAvailBegin[i]) {
