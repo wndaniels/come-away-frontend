@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Form, useNavigate, useParams } from "react-router-dom";
-import ComeAwayApi from "../Api/api.js";
-import Alert from "../Common/Alert.js";
+import { useNavigate, useParams } from "react-router-dom";
+import ComeAwayApi from "../Api/api";
+import Alert from "../Common/Alert";
 import moment from "moment";
+import { waitFor } from "@testing-library/react";
 
 const VisitorForm = () => {
   const navigate = useNavigate();
@@ -31,122 +32,132 @@ const VisitorForm = () => {
 
   const params = useParams();
 
-  useEffect(
-    function loadUsersInfo() {
-      async function getUsers() {
-        const userData = await ComeAwayApi.getAllUsers();
-        try {
-          userData.forEach((d) => {
-            if (params.username === d.username) setParamUser(d);
-          });
-        } catch (errors) {
-          return;
-        }
-        setInfoLoaded(true);
-      }
-      setInfoLoaded(false);
-      getUsers([]);
-    },
-    [params.username]
-  );
-
   useEffect(() => {
-    async function getCalIdByUser() {
-      const calData = await ComeAwayApi.getAllCals();
+    async function fetchData() {
       try {
-        calData.forEach((i) => {
-          if (paramUser.id === i.userId) setCalId(i);
-        });
+        setInfoLoaded(false);
+        const calData = await ComeAwayApi.getAllCals();
+        const userData = await ComeAwayApi.getAllUsers();
+        if (userData) {
+          const paramUserData = userData.find(
+            (d) => params.username === d.username
+          );
+          setParamUser(paramUserData);
+
+          if (paramUserData && calData) {
+            const calDataForUser = calData.find(
+              (i) => paramUserData.id === i.userId
+            );
+            setCalId(calDataForUser);
+          }
+        }
+
+        const beginHourRes = await ComeAwayApi.getBeginHours();
+        if (beginHourRes) {
+          setCalAvailBegin(beginHourRes);
+        }
+
+        const endHourRes = await ComeAwayApi.getEndHours();
+        if (endHourRes) {
+          setCalAvailEnd(endHourRes);
+        }
+
+        setInfoLoaded(true);
       } catch (errors) {
-        return;
+        console.error(errors);
       }
     }
-    getCalIdByUser([]);
-  }, [paramUser]);
 
-  useEffect(
-    function getVisitingHoursData() {
-      async function getBeginHoursData() {
-        const beginHourRes = await ComeAwayApi.getBeginHours();
-        setCalAvailBegin(beginHourRes);
-      }
-
-      async function getEndHourData() {
-        const endHourRes = await ComeAwayApi.getEndtHours();
-
-        setCalAvailEnd(endHourRes);
-      }
-
-      getBeginHoursData([]);
-      getEndHourData([]);
-    },
-    [calId.businessBeginsHour]
-  );
+    fetchData();
+  }, [params.username]);
 
   useEffect(() => {
-    async function getDueDate() {
-      const dueDate = await ComeAwayApi.getAllDueDates();
-
-      dueDate.forEach((d) => {
-        if (paramUser.id === d.userId) {
-          setDueDate(d);
+    async function fetchYearMonthDayData() {
+      if (dueDate) {
+        const yearData = await ComeAwayApi.getYears();
+        const yearDataForUser = yearData.find((y) => dueDate.yearId === y.id);
+        if (yearDataForUser) {
+          setYear(yearDataForUser.year);
         }
-      });
-    }
 
-    getDueDate();
-  }, [paramUser.id]);
-
-  useEffect(
-    function getDueDateData() {
-      async function getDayData() {
-        const dayData = await ComeAwayApi.getDays();
-
-        dayData.forEach((d) => {
-          if (dueDate?.dayId === d.id) {
-            setDay(d.id);
-          }
-        });
-      }
-
-      async function getMonthData() {
         const monthData = await ComeAwayApi.getMonths();
 
-        monthData.forEach((m) => {
-          if (dueDate?.monthId === m.id) {
-            setMonth(m.id);
-          }
-        });
-      }
+        const monthDataForUser = monthData.find(
+          (m) => dueDate.monthId === m.id
+        );
+        if (monthDataForUser) {
+          setMonth(monthDataForUser.id);
+        }
 
-      async function getYearData() {
-        const yearData = await ComeAwayApi.getYears();
+        const dayData = await ComeAwayApi.getDays();
 
-        yearData.forEach((y) => {
-          if (dueDate?.yearId === y.id) {
-            setYear(y.year);
-          }
-        });
-      }
-
-      getDayData([]);
-      getMonthData([]);
-      getYearData([]);
-    },
-    [dueDate?.dayId, dueDate?.monthId, dueDate?.yearId]
-  );
-
-  useEffect(() => {
-    async function createDueDateString() {
-      try {
-        let date = new Date(year + "-" + month + "-" + day).toISOString();
-        setStartDateFromDueDate(date);
-      } catch (errors) {
-        return;
+        const dayDataForUser = dayData.find((d) => dueDate.dayId === d.id);
+        if (dayDataForUser) {
+          setDay(dayDataForUser.id);
+        }
       }
     }
-    createDueDateString();
+
+    if (dueDate) {
+      fetchYearMonthDayData();
+    }
+  }, [dueDate]);
+
+  useEffect(() => {
+    async function fetchDueDateData() {
+      const dueDateResponse = await ComeAwayApi.getAllDueDates();
+      const dueDateData = dueDateResponse.find(
+        (d) => paramUser.id === d.userId
+      );
+      if (dueDateData) {
+        setDueDate(dueDateData);
+      }
+    }
+    if (paramUser && paramUser.id) {
+      fetchDueDateData();
+    }
+  }, [paramUser]);
+
+  useEffect(() => {
+    try {
+      if (year && month && day) {
+        let date = new Date(year + "-" + month + "-" + day).toISOString();
+        setStartDateFromDueDate(date);
+      }
+    } catch (errors) {
+      console.error(errors);
+    }
   }, [year, month, day]);
+
+  let timeOptions = [];
+
+  const startTimeKey = Math.min(calId.businessBeginsHour);
+  const endTimeKey = Math.max(calId.businessEndsHour);
+
+  for (let i = startTimeKey; i <= endTimeKey; i++) {
+    if (calAvailBegin[i]) {
+      const timeValue = calAvailBegin[i];
+      timeOptions.push(
+        <option key={i} value={timeValue.isoTime}>
+          {timeValue.hourTitle}
+        </option>
+      );
+    }
+  }
+
+  const dateObj = moment(startDateFromDueDate, "YYYY-MM-DDTHH:mm:ss");
+  let visitDayOption = [];
+
+  for (let i = 0; i < 7; i++) {
+    if (dateObj) {
+      const nextDate = dateObj.clone().add(i, "days");
+      visitDayOption.push(
+        <option key={i} value={nextDate.format("YYYY-MM-DD")}>
+          {nextDate.format("MM-DD-YYYY")}
+        </option>
+      );
+    }
+  }
 
   async function handleSubmit(evt) {
     evt.preventDefault();
@@ -187,34 +198,6 @@ const VisitorForm = () => {
     setFormError([]);
   }
 
-  const startTimeKey = Math.min(calId.businessBeginsHour);
-  const endTimeKey = Math.max(calId.businessEndsHour);
-
-  let timeOptions = [];
-
-  for (let i = startTimeKey; i <= endTimeKey; i++) {
-    const timeValue = calAvailBegin[i];
-
-    timeOptions.push(
-      <option key={i} value={timeValue.isoTime}>
-        {timeValue.hourTitle}
-      </option>
-    );
-  }
-
-  const dateStr = startDateFromDueDate;
-  const dateObj = moment(dateStr, "YYYY-MM-DDTHH:mm:ss");
-  let visitDayOption = [];
-
-  for (let i = 0; i < 7; i++) {
-    const nextDate = dateObj.clone().add(i, "days");
-    visitDayOption.push(
-      <option key={i} value={nextDate.format("YYYY-MM-DD")}>
-        {nextDate.format("YYYY-MM-DD")}
-      </option>
-    );
-  }
-
   if (!infoLoaded) return <h3>Loading...</h3>;
 
   return (
@@ -223,7 +206,7 @@ const VisitorForm = () => {
         <h1 className="mb-3">Schedule a Visit!</h1>
         <div className="card">
           <div className="card-body">
-            <Form method="patch" onSubmit={handleSubmit}>
+            <form method="patch" onSubmit={handleSubmit}>
               <div className="d-grid gap-3">
                 <div className="form-group">
                   {formError.length ? (
@@ -235,6 +218,7 @@ const VisitorForm = () => {
                   <div className="form-group">
                     <label htmlFor="fullName">* Name of Visitor(s):</label>
                     <input
+                      id="fullName"
                       name="fullName"
                       type="text"
                       onChange={handleChange}
@@ -245,6 +229,7 @@ const VisitorForm = () => {
                   <div className="form-group">
                     <label htmlFor="note">Leave a note for the family:</label>
                     <textarea
+                      id="note"
                       name="note"
                       type="text"
                       onChange={handleChange}
@@ -257,6 +242,7 @@ const VisitorForm = () => {
                       * What day would you like to visit?
                     </label>
                     <select
+                      id="visitDate"
                       name="visitDate"
                       className="form-control mb-3"
                       onChange={(e) => setDateIsoValue(e.target.value)}
@@ -271,6 +257,7 @@ const VisitorForm = () => {
                       * What time would you like to visit?:
                     </label>
                     <select
+                      id="startTime"
                       name="startTime"
                       className="form-control mb-3"
                       onChange={(e) => setTimeStartIsoValue(e.target.value)}
@@ -287,6 +274,7 @@ const VisitorForm = () => {
                       <i>(Visits are limited to 1 hour increments)</i>
                     </label>
                     <select
+                      id="endTime"
                       name="endTime"
                       className="form-control mb-3"
                       onChange={(e) => setTimeEndIsoValue(e.target.value)}
@@ -301,7 +289,7 @@ const VisitorForm = () => {
               <button className="btn btn-sm btn-primary">
                 Schedule your visit
               </button>
-            </Form>
+            </form>
           </div>
         </div>
       </div>

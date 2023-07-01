@@ -1,0 +1,85 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ProfileEditForm renders without crashing 1`] = `
+<DocumentFragment>
+  <div
+    class="ProfileEditForm m-5"
+  >
+    <div
+      class="container col-md-6 offset-md-3 col-lg-4 offset-lg-4"
+    >
+      <h1
+        class="mb-3"
+      >
+        Profile Form
+      </h1>
+      <div
+        class="card"
+      >
+        <div
+          class="card-body"
+        >
+          <form>
+            <div
+              class="d-grid gap-2"
+            >
+              <div
+                class="form-group"
+              >
+                <h3 />
+              </div>
+              <div
+                class="form-group"
+              >
+                <label
+                  class="mb-1"
+                >
+                  First Name:
+                </label>
+                <input
+                  class="form-control"
+                  name="firstName"
+                  value=""
+                />
+              </div>
+              <div
+                class="form-group"
+              >
+                <label
+                  class="mb-1"
+                >
+                  Last Name:
+                </label>
+                <input
+                  class="form-control"
+                  name="lastName"
+                  value=""
+                />
+              </div>
+              <div
+                class="form-group"
+              >
+                <label
+                  class="mb-1"
+                >
+                  Email:
+                </label>
+                <input
+                  class="form-control mb-3"
+                  name="email"
+                  value=""
+                />
+              </div>
+            </div>
+            <button
+              class="btn btn-sm btn-primary float-right"
+            >
+              Save Changes
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

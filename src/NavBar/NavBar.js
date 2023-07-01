@@ -59,14 +59,14 @@ const NavBar = () => {
     return (
       <ul className="navbar-nav ml-auto">
         <li className="nav-item mr-4">
-          <NavLink className="nav-link" to="/login">
+          <a className="nav-link" href="/login">
             Login
-          </NavLink>
+          </a>
         </li>
         <li className="nav-item mr-4">
-          <NavLink className="nav-link" to="/signup">
+          <a className="nav-link" href="/signup">
             Sign Up
-          </NavLink>
+          </a>
         </li>
       </ul>
     );
@@ -77,25 +77,25 @@ const NavBar = () => {
       return (
         <ul className="navbar-nav ml-auto">
           <li className="nav-item mr-4">
-            <NavLink
+            <a
               className="nav-link"
-              to={`/${currentUser.username}/calendar/setup/1`}
+              href={`/${currentUser.username}/calendar/setup/1`}
             >
               Create Calendar
-            </NavLink>
+            </a>
           </li>
           <li className="nav-item mr-4">
-            <NavLink
+            <a
               className="nav-link"
-              to={`/${currentUser.username}/profile/edit`}
+              href={`/${currentUser.username}/profile/edit`}
             >
               Profile
-            </NavLink>
+            </a>
           </li>
           <li className="nav-item mr-4">
-            <NavLink className="nav-link" onClick={logout}>
+            <a className="nav-link" href="/" onClick={logout}>
               Logout
-            </NavLink>
+            </a>
           </li>
         </ul>
       );
@@ -103,25 +103,25 @@ const NavBar = () => {
       return (
         <ul className="navbar-nav ml-auto">
           <li className="nav-item mr-4">
-            <NavLink
+            <a
               className="nav-link"
-              to={`/${currentUser.username}/calendar/edit`}
+              href={`/${currentUser.username}/calendar/edit`}
             >
               Edit Calendar
-            </NavLink>
+            </a>
           </li>
           <li className="nav-item mr-4">
-            <NavLink
+            <a
               className="nav-link"
-              to={`/${currentUser.username}/profile/edit`}
+              href={`/${currentUser.username}/profile/edit`}
             >
               Profile
-            </NavLink>
+            </a>
           </li>
           <li className="nav-item mr-4">
-            <NavLink className="nav-link" onClick={logout}>
+            <a className="nav-link" href="/" onClick={logout}>
               Logout
-            </NavLink>
+            </a>
           </li>
         </ul>
       );
@@ -131,9 +131,9 @@ const NavBar = () => {
   return (
     <nav className="NavBar navbar navbar-expand-sm">
       <div className="container-fluid">
-        <Link className="navbar-brand" to="/">
+        <a className="navbar-brand" href="/">
           COME/AWAY
-        </Link>
+        </a>
         {currentUser ? loggedInUser() : loggedOutUser()}
       </div>
     </nav>

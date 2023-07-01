@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Calendar renders without crashing 1`] = `
+<DocumentFragment>
+  <div
+    style="display: flex;"
+  >
+    <div
+      style="flex-grow: 1;"
+    >
+      <div
+        class="week-change m-4"
+      >
+        <button
+          class="btn btn-sm btn-primary me-5"
+        >
+          Previous
+        </button>
+        WEEK
+        <button
+          class="btn btn-sm btn-primary ms-5"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

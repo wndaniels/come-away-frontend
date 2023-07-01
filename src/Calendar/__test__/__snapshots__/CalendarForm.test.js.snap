@@ -1,0 +1,78 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CalendarForm renders without crashing 1`] = `
+<DocumentFragment>
+  <div
+    class="CalendarForm mt-5"
+  >
+    <div
+      class="container col-md-6 offset-md-3 col-lg-4 offset-lg-4"
+    >
+      <h1
+        class="mb-3"
+      >
+        Create Calendar
+      </h1>
+      <div
+        class="card"
+      >
+        <div
+          class="card-body"
+        >
+          <form
+            method="post"
+          >
+            <div
+              class="d-grid gap-3"
+            >
+              <div
+                class="form-group"
+              >
+                <label
+                  for="businessBeginsHour"
+                >
+                  * Select Start Time:
+                </label>
+                <select
+                  class="form-control"
+                  name="businessBeginsHour"
+                >
+                  <option
+                    hidden=""
+                  >
+                    -
+                  </option>
+                </select>
+              </div>
+              <div
+                class="form-group"
+              >
+                <label
+                  for="businessEndsHour"
+                >
+                  * Select End Time:
+                </label>
+                <select
+                  class="form-control mb-3"
+                  name="businessEndsHour"
+                >
+                  <option
+                    hidden=""
+                  >
+                    -
+                  </option>
+                </select>
+              </div>
+            </div>
+            <button
+              class="btn btn-sm btn-primary"
+            >
+              Create Calendar
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

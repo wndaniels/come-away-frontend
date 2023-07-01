@@ -98,9 +98,9 @@ const Home = () => {
               visit to meet your families newest edition!
             </h4>
             <h6 className="mb-3">
-              <Link to={`/${currentUser.username}/calendar/visit`}>
+              <a href={`/${currentUser.username}/calendar/visit`}>
                 https://comeawayapp.com/{currentUser.username}/calendar/visit
-              </Link>
+              </a>
             </h6>
           </div>
 

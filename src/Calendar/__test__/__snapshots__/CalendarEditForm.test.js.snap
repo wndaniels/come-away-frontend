@@ -1,0 +1,185 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CalendarEditForm renders without crashing 1`] = `
+<DocumentFragment>
+  <div
+    class="m-5"
+  >
+    <div>
+      <div
+        class="DueDateEditForm"
+      >
+        <div
+          class="container col-md-6 offset-md-3 col-lg-4 offset-lg-4"
+        >
+          <h1>
+            Edit Due Date
+          </h1>
+          <div
+            class="card"
+          >
+            <div
+              class="card-body"
+            >
+              <form
+                method="post"
+              >
+                <div
+                  class="d-grid gap-3"
+                >
+                  <div
+                    class="form-group"
+                  >
+                    <label>
+                      Baby's Name:
+                    </label>
+                    <input
+                      class="form-control"
+                      name="babyName"
+                      type="text"
+                      value=""
+                    />
+                  </div>
+                  <div
+                    class="form-group"
+                  >
+                    <label>
+                      Month
+                    </label>
+                    <select
+                      class="form-control"
+                      name="monthId"
+                    >
+                      <option
+                        hidden=""
+                      >
+                        -
+                      </option>
+                    </select>
+                  </div>
+                  <div
+                    class="form-group"
+                  >
+                    <label>
+                      Day
+                    </label>
+                    <select
+                      class="form-control"
+                      name="dayId"
+                    >
+                      <option
+                        hidden=""
+                      >
+                        -
+                      </option>
+                    </select>
+                  </div>
+                  <div
+                    class="form-group"
+                  >
+                    <label>
+                      Year
+                    </label>
+                    <select
+                      class="form-control"
+                      name="yearId"
+                    >
+                      <option
+                        hidden=""
+                      >
+                        -
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <button
+                  class="btn btn-sm btn-primary mt-3"
+                >
+                  Update Due Date
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="CalendarEditForm mt-5"
+    >
+      <div
+        class="container col-md-6 offset-md-3 col-lg-4 offset-lg-4"
+      >
+        <h1
+          class="mb-3"
+        >
+          Edit Calendar
+        </h1>
+        <div
+          class="card"
+        >
+          <div
+            class="card-body"
+          >
+            <form
+              method="patch"
+            >
+              <div
+                class="d-grid gap-3"
+              >
+                <div
+                  class="form-group"
+                >
+                  <label
+                    for="businessBeginsHour"
+                  >
+                    * Select Start Time:
+                  </label>
+                  <select
+                    class="form-control"
+                    name="businessBeginsHour"
+                  >
+                    <option
+                      hidden=""
+                    >
+                      -
+                    </option>
+                  </select>
+                </div>
+                <div
+                  class="form-group"
+                >
+                  <label
+                    for="businessEndsHour"
+                  >
+                    * Select End Time:
+                  </label>
+                  <select
+                    class="form-control mb-3"
+                    name="businessEndsHour"
+                  >
+                    <option
+                      hidden=""
+                    >
+                      -
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <button
+                class="btn btn-sm btn-primary "
+              >
+                Update Calendar
+              </button>
+              <button
+                class="btn btn-sm btn-danger ms-3"
+              >
+                Delete
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

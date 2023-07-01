@@ -1,33 +1,37 @@
+import "../../matchMedia.mock";
 import React from "react";
 import { render } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import "@testing-library/jest-dom";
-import LoginForm from "../LoginForm";
-import UserContext from "../UserContext";
+import Calendar from "../Calendar";
+import UserContext from "../../Auth/UserContext";
 
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
-  useNavigate: () => jest.fn(),
+jest.mock("@daypilot/daypilot-lite-react", () => ({
+  ...jest.requireActual("@daypilot/daypilot-lite-react"),
+  DayPilot: () => jest.fn(),
+  DayPilotCalendar: () => jest.fn(),
 }));
 
-describe("LoginForm", () => {
+describe("Calendar", () => {
   it("renders without crashing", () => {
     const { asFragment } = render(
       <Wrapper>
-        <LoginForm />
+        <Calendar />
       </Wrapper>
     );
     expect(asFragment()).toMatchSnapshot();
   });
 
-  it("can find placeholder", () => {
-    const { getByPlaceholderText } = render(
+  it("can find button text", () => {
+    const { getByText } = render(
       <Wrapper>
-        <LoginForm />
+        <Calendar />
       </Wrapper>
     );
-    const usernamePlaceholder = getByPlaceholderText(/username/i);
-    expect(usernamePlaceholder).toBeInTheDocument();
+    const previousButtonText = getByText(/previous/i);
+    const nextButtonText = getByText(/next/i);
+    expect(previousButtonText).toBeInTheDocument();
+    expect(nextButtonText).toBeInTheDocument();
   });
 });
 

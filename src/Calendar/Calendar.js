@@ -3,7 +3,7 @@ import UserContext from "../Auth/UserContext.js";
 import useLocalStorage from "../hooks/useLocalStorage.js";
 import jwt from "jsonwebtoken";
 import { DayPilot, DayPilotCalendar } from "@daypilot/daypilot-lite-react";
-import ComeAwayApi from "../Api/api.js";
+import ComeAwayApi from "../Api/api";
 
 const styles = {
   wrap: {
@@ -186,24 +186,32 @@ const Calendar = () => {
     async function getVisitorDataForDisplay() {
       const visitors = await ComeAwayApi.getAllVisitors();
 
-      if (calByUserId?.id === visitors.calendarId)
-        try {
-          const events = visitors.map((v) => ({
-            id: v.id,
-            start: new DayPilot.Date(v.startTime),
-            end: new DayPilot.Date(v.endTime),
-            text: v.fullName,
-          }));
-
-          setVisitorDataforDisplay(events);
-        } catch (errors) {
-          return;
+      if (Array.isArray(visitors) && calByUserId?.id) {
+        const matchingEvents = [];
+        visitors.forEach((visitor) => {
+          if (visitor.calendarId === calByUserId.id) {
+            try {
+              const event = {
+                id: visitor.id,
+                start: new DayPilot.Date(visitor.startTime),
+                end: new DayPilot.Date(visitor.endTime),
+                text: visitor.fullName,
+              };
+              matchingEvents.push(event);
+            } catch (errors) {
+              return;
+            }
+          }
+        });
+        if (matchingEvents.length > 0) {
+          setVisitorDataforDisplay(matchingEvents);
         }
+      }
     }
 
     async function getVisitorData() {
       const visitors = await ComeAwayApi.getAllVisitors();
-      if (calByUserId?.id === visitors.calendarId)
+      if (calByUserId?.id === visitors?.calendarId)
         try {
           visitors.forEach((v) => {
             setVisitorData(v);
@@ -217,9 +225,9 @@ const Calendar = () => {
     getVisitorData();
   }, [calByUserId?.id]);
 
-  async function handleDeleteVisitors(evt) {
+  async function handleDeleteVisitors(args) {
     let username = currentUser.username;
-    let id = visitorData.id;
+    let id = args.e.data.id; // Get id from the deleted event
 
     try {
       await ComeAwayApi.deleteVisitor(id, username);
@@ -231,8 +239,7 @@ const Calendar = () => {
   async function onEventClick() {
     const modalHtml = `<div>
         <h2>Name: ${visitorData.fullName}</h2>
-        <h2>Note:</h2>
-        ${visitorData.note}
+        <h2>Note: ${visitorData.note}</h2>
       </div>`;
     DayPilot.Modal.alert(modalHtml);
   }

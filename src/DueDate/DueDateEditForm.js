@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import useLocalStorage from "../hooks/useLocalStorage.js";
-import { Form, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ComeAwayApi from "../Api/api.js";
 import UserContext from "../Auth/UserContext.js";
 import jwt from "jsonwebtoken";
@@ -141,7 +141,7 @@ const DueDateEditForm = () => {
         <h1>Edit Due Date</h1>
         <div className="card">
           <div className="card-body">
-            <Form method="post">
+            <form method="post">
               <div className="d-grid gap-3">
                 {formError.length ? (
                   <Alert
@@ -215,7 +215,7 @@ const DueDateEditForm = () => {
               >
                 Update Due Date
               </button>
-            </Form>
+            </form>
           </div>
         </div>
       </div>

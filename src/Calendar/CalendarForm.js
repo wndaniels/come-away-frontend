@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import useLocalStorage from "../hooks/useLocalStorage.js";
-import { Form, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ComeAwayApi from "../Api/api.js";
 import UserContext from "../Auth/UserContext.js";
 import jwt from "jsonwebtoken";
@@ -52,7 +52,7 @@ const CalendarForm = () => {
     }
 
     async function getEndHourData() {
-      const endHourRes = await ComeAwayApi.getEndtHours();
+      const endHourRes = await ComeAwayApi.getEndHours();
       setCalAvailEnd(endHourRes);
     }
 
@@ -104,7 +104,7 @@ const CalendarForm = () => {
         <h1 className="mb-3">Create Calendar</h1>
         <div className="card">
           <div className="card-body">
-            <Form method="post">
+            <form method="post">
               <div className="d-grid gap-3">
                 {formError.length ? (
                   <Alert
@@ -153,7 +153,7 @@ const CalendarForm = () => {
               <button onClick={handleSubmit} className="btn btn-sm btn-primary">
                 Create Calendar
               </button>
-            </Form>
+            </form>
           </div>
         </div>
       </div>

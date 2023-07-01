@@ -1,0 +1,54 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NavBar renders without crashing 1`] = `
+<DocumentFragment>
+  <nav
+    class="NavBar navbar navbar-expand-sm"
+  >
+    <div
+      class="container-fluid"
+    >
+      <a
+        class="navbar-brand"
+        href="/"
+      >
+        COME/AWAY
+      </a>
+      <ul
+        class="navbar-nav ml-auto"
+      >
+        <li
+          class="nav-item mr-4"
+        >
+          <a
+            class="nav-link"
+            href="/undefined/calendar/setup/1"
+          >
+            Create Calendar
+          </a>
+        </li>
+        <li
+          class="nav-item mr-4"
+        >
+          <a
+            class="nav-link"
+            href="/undefined/profile/edit"
+          >
+            Profile
+          </a>
+        </li>
+        <li
+          class="nav-item mr-4"
+        >
+          <a
+            class="nav-link"
+            href="/"
+          >
+            Logout
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</DocumentFragment>
+`;

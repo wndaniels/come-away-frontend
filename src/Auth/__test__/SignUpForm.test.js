@@ -2,7 +2,7 @@ import React from "react";
 import { render } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import "@testing-library/jest-dom";
-import LoginForm from "../LoginForm";
+import SignUpForm from "../SignUpForm";
 import UserContext from "../UserContext";
 
 jest.mock("react-router-dom", () => ({
@@ -10,11 +10,11 @@ jest.mock("react-router-dom", () => ({
   useNavigate: () => jest.fn(),
 }));
 
-describe("LoginForm", () => {
+describe("SignUpForm", () => {
   it("renders without crashing", () => {
     const { asFragment } = render(
       <Wrapper>
-        <LoginForm />
+        <SignUpForm />
       </Wrapper>
     );
     expect(asFragment()).toMatchSnapshot();
@@ -23,7 +23,7 @@ describe("LoginForm", () => {
   it("can find placeholder", () => {
     const { getByPlaceholderText } = render(
       <Wrapper>
-        <LoginForm />
+        <SignUpForm />
       </Wrapper>
     );
     const usernamePlaceholder = getByPlaceholderText(/username/i);

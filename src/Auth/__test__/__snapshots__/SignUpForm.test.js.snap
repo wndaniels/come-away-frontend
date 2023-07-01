@@ -1,18 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`LoginForm renders without crashing 1`] = `
+exports[`SignUpForm renders without crashing 1`] = `
 <DocumentFragment>
   <div
-    class="LoginForm m-5"
+    class="SignUpForm m-5"
   >
     <div
       class="container col-md-6 offset-md-3 col-lg-4 offset-lg-4"
     >
       <h1
         class="mb-3"
-        data-testid="header"
       >
-        Login
+        Sign Up
       </h1>
       <div
         class="card"
@@ -34,6 +33,40 @@ exports[`LoginForm renders without crashing 1`] = `
                   name="username"
                   placeholder="Username"
                   type="text"
+                  value=""
+                />
+              </div>
+              <div
+                class="form-group"
+              >
+                <input
+                  class="form-control"
+                  name="password"
+                  placeholder="Password"
+                  type="password"
+                  value=""
+                />
+              </div>
+              <div
+                class="form-group"
+              >
+                <input
+                  class="form-control"
+                  name="firstName"
+                  placeholder="First Name"
+                  type="text"
+                  value=""
+                />
+              </div>
+              <div
+                class="form-group"
+              >
+                <input
+                  class="form-control"
+                  name="lastName"
+                  placeholder="Last Name"
+                  type="text"
+                  value=""
                 />
               </div>
               <div
@@ -41,16 +74,17 @@ exports[`LoginForm renders without crashing 1`] = `
               >
                 <input
                   class="form-control mb-3"
-                  name="password"
-                  placeholder="Password"
-                  type="password"
+                  name="email"
+                  placeholder="Email"
+                  type="email"
+                  value=""
                 />
               </div>
             </div>
             <button
               class="btn btn-sm btn-primary"
             >
-              Login
+              Sign Up
             </button>
           </form>
         </div>

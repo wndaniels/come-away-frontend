@@ -1,10 +1,10 @@
 import { useState, useContext, useEffect } from "react";
 import UserContext from "../Auth/UserContext.js";
-import { Form, useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Alert from "../Common/Alert.js";
 import ComeAwayApi from "../Api/api.js";
 
-const ProfileForm = () => {
+const ProfileEditForm = () => {
   const navigate = useNavigate();
   const { currentUser, setCurrentUser } = useContext(UserContext);
   const { username } = useParams(currentUser.username);
@@ -62,7 +62,7 @@ const ProfileForm = () => {
         <h1 className="mb-3">Profile Form</h1>
         <div className="card">
           <div className="card-body">
-            <Form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit}>
               <div className="d-grid gap-2">
                 <div className="form-group">
                   <h3>{formData.username}</h3>
@@ -107,7 +107,7 @@ const ProfileForm = () => {
               <button className="btn btn-sm btn-primary float-right">
                 Save Changes
               </button>
-            </Form>
+            </form>
           </div>
         </div>
       </div>
@@ -115,4 +115,4 @@ const ProfileForm = () => {
   );
 };
 
-export default ProfileForm;
+export default ProfileEditForm;

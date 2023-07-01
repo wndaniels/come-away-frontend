@@ -1,33 +1,39 @@
+import "../../matchMedia.mock";
 import React from "react";
-import { render } from "@testing-library/react";
+import { getByRole, render } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import "@testing-library/jest-dom";
-import LoginForm from "../LoginForm";
-import UserContext from "../UserContext";
+import NavBar from "../NavBar";
+import UserContext from "../../Auth/UserContext";
 
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
   useNavigate: () => jest.fn(),
 }));
 
-describe("LoginForm", () => {
+describe("NavBar", () => {
   it("renders without crashing", () => {
     const { asFragment } = render(
       <Wrapper>
-        <LoginForm />
+        <NavBar />
       </Wrapper>
     );
+
     expect(asFragment()).toMatchSnapshot();
   });
 
-  it("can find placeholder", () => {
-    const { getByPlaceholderText } = render(
+  it("can find heading", () => {
+    const { getByRole } = render(
       <Wrapper>
-        <LoginForm />
+        <NavBar />
       </Wrapper>
     );
-    const usernamePlaceholder = getByPlaceholderText(/username/i);
-    expect(usernamePlaceholder).toBeInTheDocument();
+
+    const anchorTag = getByRole("link", {
+      name: "COME/AWAY",
+      class: "navbar-brand",
+    });
+    expect(anchorTag).toBeInTheDocument();
   });
 });
 

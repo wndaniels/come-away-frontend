@@ -2,32 +2,32 @@ import React from "react";
 import { render } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import "@testing-library/jest-dom";
-import LoginForm from "../LoginForm";
-import UserContext from "../UserContext";
+import CalendarForm from "../CalendarForm";
+import UserContext from "../../Auth/UserContext";
 
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
   useNavigate: () => jest.fn(),
 }));
 
-describe("LoginForm", () => {
+describe("CalendarForm", () => {
   it("renders without crashing", () => {
     const { asFragment } = render(
       <Wrapper>
-        <LoginForm />
+        <CalendarForm />
       </Wrapper>
     );
     expect(asFragment()).toMatchSnapshot();
   });
 
   it("can find placeholder", () => {
-    const { getByPlaceholderText } = render(
+    const { getByText } = render(
       <Wrapper>
-        <LoginForm />
+        <CalendarForm />
       </Wrapper>
     );
-    const usernamePlaceholder = getByPlaceholderText(/username/i);
-    expect(usernamePlaceholder).toBeInTheDocument();
+    const startTimeSelect = getByText(/select start time:/i);
+    expect(startTimeSelect).toBeInTheDocument();
   });
 });
 

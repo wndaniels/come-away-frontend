@@ -2,32 +2,40 @@ import React from "react";
 import { render } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import "@testing-library/jest-dom";
-import LoginForm from "../LoginForm";
-import UserContext from "../UserContext";
+import CalendarEditForm from "../CalendarEditForm";
+import UserContext from "../../Auth/UserContext";
 
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
   useNavigate: () => jest.fn(),
 }));
 
-describe("LoginForm", () => {
+describe("CalendarEditForm", () => {
   it("renders without crashing", () => {
     const { asFragment } = render(
       <Wrapper>
-        <LoginForm />
+        <CalendarEditForm />
       </Wrapper>
     );
+
     expect(asFragment()).toMatchSnapshot();
   });
 
   it("can find placeholder", () => {
-    const { getByPlaceholderText } = render(
+    const { getByRole, getByText } = render(
       <Wrapper>
-        <LoginForm />
+        <CalendarEditForm />
       </Wrapper>
     );
-    const usernamePlaceholder = getByPlaceholderText(/username/i);
-    expect(usernamePlaceholder).toBeInTheDocument();
+
+    const heading = getByRole("heading", {
+      name: /edit calendar/i,
+      class: "mb-3",
+    });
+    const deleteButtonText = getByText(/delete/i);
+
+    expect(heading).toBeInTheDocument();
+    expect(deleteButtonText).toBeInTheDocument();
   });
 });
 

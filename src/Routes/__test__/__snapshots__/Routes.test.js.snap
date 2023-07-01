@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`App renders without crashingu 1`] = `
+exports[`Routes renders without crashing 1`] = `
 <DocumentFragment>
   <nav
     class="NavBar navbar navbar-expand-sm"

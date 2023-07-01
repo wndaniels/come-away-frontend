@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import useLocalStorage from "../hooks/useLocalStorage.js";
-import { Form, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ComeAwayApi from "../Api/api.js";
 import UserContext from "../Auth/UserContext.js";
 import jwt from "jsonwebtoken";
@@ -9,7 +9,7 @@ import DueDateEditForm from "../DueDate/DueDateEditForm.js";
 
 export const TOKEN_STORAGE_ID = "comeaway-token";
 
-const CalendarForm = () => {
+const CalendarEditForm = () => {
   const navigate = useNavigate();
   const { currentUser, setCurrentUser } = useContext(UserContext);
   const [infoLoaded, setInfoLoaded] = useState(false);
@@ -88,7 +88,7 @@ const CalendarForm = () => {
 
     async function getEndHourData() {
       try {
-        const endHourRes = await ComeAwayApi.getEndtHours();
+        const endHourRes = await ComeAwayApi.getEndHours();
         setCalAvailEnd(endHourRes);
       } catch (errors) {
         return;
@@ -114,7 +114,6 @@ const CalendarForm = () => {
 
     try {
       updatedCal = await ComeAwayApi.updateCal(username, id, calendarData);
-      console.log(updatedCal);
     } catch (errors) {
       setFormError([errors]);
       return;
@@ -171,7 +170,7 @@ const CalendarForm = () => {
           <h1 className="mb-3">Edit Calendar</h1>
           <div className="card">
             <div className="card-body">
-              <Form method="patch">
+              <form method="patch">
                 <div className="d-grid gap-3">
                   {formError.length ? (
                     <Alert
@@ -236,7 +235,7 @@ const CalendarForm = () => {
                 >
                   Delete
                 </button>
-              </Form>
+              </form>
             </div>
           </div>
         </div>
@@ -245,4 +244,4 @@ const CalendarForm = () => {
   );
 };
 
-export default CalendarForm;
+export default CalendarEditForm;

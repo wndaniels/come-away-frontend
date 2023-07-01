@@ -34,16 +34,16 @@ class ComeAwayApi {
    *
    **************/
 
-  // Get currentUser
-  static async getCurrentUser(username) {
-    let res = await this.request(`users/${username}`);
-    return res.user;
-  }
-
   // Get all users
   static async getAllUsers() {
     let res = await this.request(`users`);
     return res;
+  }
+
+  // Get currentUser
+  static async getCurrentUser(username) {
+    let res = await this.request(`users/${username}`);
+    return res.user;
   }
 
   // Get token for login from username, password.
@@ -94,7 +94,7 @@ class ComeAwayApi {
   }
 
   // Get end hour data for seeding end times options in form.
-  static async getEndtHours(businessEndsHour, hourTitle, isoTime) {
+  static async getEndHours(businessEndsHour, hourTitle, isoTime) {
     let res = await this.request(
       `calendar/end-hours`,
       businessEndsHour,

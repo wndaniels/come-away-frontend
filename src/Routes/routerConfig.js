@@ -10,7 +10,7 @@ import Main from "../Main.js";
 import ProfileEditForm from "../Profile/ProfileEditForm.js";
 import VistorConfirmation from "../Visitor/VisitorConfirmation.js";
 import VisitorForm from "../Visitor/VisitorForm.js";
-import PrivatePaths from "./PrivatePaths.js";
+import PrivateRoute from "./PrivateRoute.js";
 import { Navigate } from "react-router-dom";
 
 const routerConfig = [
@@ -39,7 +39,7 @@ const routerConfig = [
         element: <VistorConfirmation />,
       },
       {
-        element: <PrivatePaths />,
+        element: <PrivateRoute />,
         children: [
           {
             path: "/:username/calendar/setup/1",
