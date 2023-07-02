@@ -99,7 +99,7 @@ const Home = () => {
             </h4>
             <h6 className="mb-3">
               <a href={`/${currentUser.username}/calendar/visit`}>
-                https://comeawayapp.com/{currentUser.username}/calendar/visit
+                https://comeaway.surge.sh/{currentUser.username}/calendar/visit
               </a>
             </h6>
           </div>

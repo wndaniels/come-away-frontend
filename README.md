@@ -1,5 +1,5 @@
 # WELCOME TO COME/AWAY
-- BACKEND: https://github.com/wndaniels/come-away-backend
+- BACK END: https://github.com/wndaniels/come-away-backend
 - DEPLOYED APP: 
   - Test User: testuser
   - Test Password: testpassword
