@@ -1,6 +1,7 @@
 # WELCOME TO COME/AWAY
 - BACK END: https://github.com/wndaniels/come-away-backend
 - DEPLOYED APP: 
+  - https://comeaway.surge.sh/
   - Test User: testuser
   - Test Password: testpassword
 
