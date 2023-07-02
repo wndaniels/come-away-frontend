@@ -4,7 +4,7 @@ import useLocalStorage from "../hooks/useLocalStorage.js";
 import { Link } from "react-router-dom";
 import jwt from "jsonwebtoken";
 import Calendar from "../Calendar/Calendar.js";
-import ComeAwayApi from "../Api/api.js";
+import { ComeAwayApi } from "../api/api.js";
 
 export const TOKEN_STORAGE_ID = "comeaway-token";
 

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import useLocalStorage from "../hooks/useLocalStorage.js";
 import { useNavigate } from "react-router-dom";
-import ComeAwayApi from "../Api/api.js";
+import { ComeAwayApi } from "../api/api.js";
 import UserContext from "../Auth/UserContext.js";
 import jwt from "jsonwebtoken";
 import Alert from "../Common/Alert.js";

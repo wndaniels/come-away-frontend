@@ -14,7 +14,7 @@ module.exports = {
   // cacheDirectory: "/private/var/folders/s9/7ggl839n56bbpwffpqm_1p1m0000gn/T/jest_dx",
 
   // Automatically clear mock calls, instances and results before every test
-  clearMocks: true,
+  clearMocks: false,
 
   // Indicates whether the coverage information should be collected while executing the test
   // collectCoverage: false,

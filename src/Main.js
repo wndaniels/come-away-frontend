@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import useLocalStorage from "./hooks/useLocalStorage.js";
 import { Outlet } from "react-router-dom";
 import NavBar from "./NavBar/NavBar.js";
-import ComeAwayApi from "./Api/api.js";
+import { ComeAwayApi } from "./api/api.js";
 import UserContext from "./Auth/UserContext.js";
 import jwt from "jsonwebtoken";
 

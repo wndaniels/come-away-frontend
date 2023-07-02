@@ -3,7 +3,7 @@ import UserContext from "../Auth/UserContext.js";
 import useLocalStorage from "../hooks/useLocalStorage.js";
 import jwt from "jsonwebtoken";
 import { DayPilot, DayPilotCalendar } from "@daypilot/daypilot-lite-react";
-import ComeAwayApi from "../Api/api";
+import { ComeAwayApi } from "../api/api.js";
 
 const styles = {
   wrap: {

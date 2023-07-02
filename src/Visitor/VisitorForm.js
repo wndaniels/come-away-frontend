@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ComeAwayApi, getAllCals } from "../Api/api";
+import { ComeAwayApi } from "../api/api";
 import Alert from "../Common/Alert";
 import moment from "moment";
-
-console.log(getAllCals());
-// const calData = ComeAwayApi.getAllCals();
-// console.log(calData);
 
 const VisitorForm = () => {
   const navigate = useNavigate();
@@ -39,8 +35,7 @@ const VisitorForm = () => {
     async function fetchData() {
       try {
         setInfoLoaded(false);
-        const calData = getAllCals();
-        console.log(getAllCals());
+        const calData = await ComeAwayApi.getAllCals();
         const userData = await ComeAwayApi.getAllUsers();
 
         if (userData) {
@@ -244,7 +239,7 @@ const VisitorForm = () => {
 
                   <div className="form-group">
                     <label htmlFor="visitDate">
-                      * What day would you like to visit?
+                      * What day would you like to visit?:
                     </label>
                     <select
                       id="visitDate"

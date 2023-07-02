@@ -7,21 +7,6 @@ const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:3001";
  * API Class
  *
  **************/
-export async function getAllCals(
-  id,
-  businessBeginsHour,
-  businessEndsHour,
-  userId
-) {
-  let res = await axios.get(
-    `calendar`,
-    id,
-    businessBeginsHour,
-    businessEndsHour,
-    userId
-  );
-  return res;
-}
 
 export class ComeAwayApi {
   // Token for interactive with the API will be stored here.
